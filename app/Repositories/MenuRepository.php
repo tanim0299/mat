@@ -209,11 +209,15 @@ class MenuRepository implements MenuInterface{
         }
     }
 
-    public function show($id){
-
+    public function show($id)
+    {
+        $data['data'] = Menu::withTrashed()->where('id',$id)->first();
+        $data['histories'] = History::where('tag','menu')->where('fk_id',$id)->orderBy('time','ASC')->get();
+        return ViewDirective::view($this->path,'show',$data);
     }
 
-    public function properties($id){
+    public function properties($id)
+    {
 
     }
 

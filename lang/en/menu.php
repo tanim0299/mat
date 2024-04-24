@@ -25,4 +25,5 @@ return array(
     'restore_message' => 'Menu Restored Successfully',
     'delete_message' => 'Menu Deleted Successfully',
     'status_message' => 'Menu Status Changed Successfully',
+    'details' => 'Details',
 );

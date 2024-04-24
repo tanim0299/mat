@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BackendController;
 use App\Http\Controllers\Admin\MenuLabelController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\RoleController;
 
 Route::get('/',[BackendController::class,'home'])->name('admin.home');
 Route::resources([
     'menu_label' => MenuLabelController::class,
     'menu' => MenuController::class,
+    'role' => RoleController::class,
 ]);
 
 // menu_label_extra_routes

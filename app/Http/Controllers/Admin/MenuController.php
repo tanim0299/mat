@@ -59,7 +59,7 @@ class MenuController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return $this->interface->show($id);
     }
 
     /**

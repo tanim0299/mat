@@ -5,12 +5,14 @@ use App\Http\Controllers\Admin\BackendController;
 use App\Http\Controllers\Admin\MenuLabelController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::get('/',[BackendController::class,'home'])->name('admin.home');
 Route::resources([
     'menu_label' => MenuLabelController::class,
     'menu' => MenuController::class,
     'role' => RoleController::class,
+    'user' => UserController::class,
 ]);
 
 // menu_label_extra_routes
@@ -26,3 +28,8 @@ Route::get('menu_trash_list',[MenuController::class,'trash_list'])->name('menu.t
 Route::get('menu_restore/{id}',[MenuController::class,'restore'])->name('menu.restore');
 Route::get('menu_delete/{id}',[MenuController::class,'delete'])->name('menu.delete');
 Route::post('change_menu_status',[MenuController::class,'status'])->name('menu.status');
+
+// role extra routes;
+Route::get('/role_trash_list',[RoleController::class,'trash_list'])->name('role.trash_list');
+Route::get('/role_restore/{id}',[RoleController::class,'restore'])->name('role.restore');
+Route::get('/role_delete/{id}',[RoleController::class,'delete'])->name('role.delete');

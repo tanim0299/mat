@@ -496,6 +496,7 @@ class MenuRepository implements MenuInterface{
                 'description' => 'Permenantly Delete Menu which name is '.$menu->name,
                 'description_bn' => 'একটি মেনু সম্পূর্ণরুপে ডিলেট করেছেন যার নাম '.$menu->name,
             ]);
+            History::where('tag','menu')->delete();
             Menu::withTrashed()->where('id',$id)->forceDelete();
             toastr()->success(__('menu.delete_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();

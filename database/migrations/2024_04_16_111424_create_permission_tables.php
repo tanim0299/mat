@@ -44,6 +44,7 @@ return new class extends Migration
             $table->string('name_bn')->nullable();
             $table->bigInteger('create_by')->unsigned();
             $table->foreign('create_by')->references('id')->on('users');
+            $table->date('deleted_at')->nullable();
             $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
             $table->timestamps();
             if ($teams || config('permission.testing')) {

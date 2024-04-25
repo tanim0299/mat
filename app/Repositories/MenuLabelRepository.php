@@ -348,6 +348,7 @@ class MenuLabelRepository implements MenuLabelInterface {
                 'description' => 'Permenantly Delete Menu Label which name is '.$data->label_name,
                 'description_bn' => 'একটি মেনু স্তর সম্পুর্ণ ডিলেট করেছেন যার নাম '.$data->label_name,
             ]);
+            History::where('tag','menu_label')->delete();
             MenuLabel::withTrashed()->where('id',$id)->forceDelete();
             toastr()->success(__('menu_label.delete_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();

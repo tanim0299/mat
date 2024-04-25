@@ -44,4 +44,16 @@
     border-radius: 0px;
     height: 34px;
 }
+
+.profile-avatar {
+    /* background: #ff8c11; */
+    color: white;
+    width: 34px;
+    height: 34px;
+    border-radius: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 24px;
+}
 </style>

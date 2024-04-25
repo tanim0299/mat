@@ -23,47 +23,29 @@
 
     <!-- Active Link -->
     @slot('active_link')
-    @lang('role.role_list')
+    @lang('role.trash_list')
     @endslot
 
     <!-- Page Title -->
     @slot('page_title')
-    @lang('role.index_title')
+    @lang('role.trash_title')
     @endslot
 
 
     <!-- button one -->
     @slot('button_one_name')
-    @lang('common.create')
+    @lang('common.view')
     @endslot
 
     @slot('button_one_route')
-    {{route('role.create')}}
+    {{route('role.index')}}
     @endslot
 
     @slot('button_one_class')
-    btn btn-sm btn-outline-primary
+    btn btn-sm btn-primary
     @endslot
 
     @slot('button_one_icon')
-    <i class="fa fa-plus"></i>
-    @endslot
-
-
-    <!-- button two -->
-    @slot('button_two_name')
-    @lang('common.trash_list')
-    @endslot
-
-    @slot('button_two_route')
-    {{route('role.trash_list')}}
-    @endslot
-
-    @slot('button_two_class')
-    btn btn-sm btn-danger
-    @endslot
-
-    @slot('button_two_icon')
     <i class="fa fa-eye"></i>
     @endslot
 
@@ -106,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function() {
     $(".myTable").DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('role.index') }}",
+        ajax: "{{ route('role.trash_list') }}",
         columns: [
             {data: 'sl', name: 'sl'},
             {data : 'name', name: 'name'},
@@ -116,6 +98,28 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+<script>
+    function changeMenuStatus(id)
+    {
+        // alert(id);
+        $.ajax({
+            headers : {
+                'X-CSRF-TOKEN' : '{{ csrf_token() }}'
+            },
+
+            url : '{{ route('menu.status') }}',
+
+            type : 'POST',
+
+            data : {id},
+
+            success : function(res)
+            {
+
+            }
+        })
+    }
+</script>
 
 @endpush
 

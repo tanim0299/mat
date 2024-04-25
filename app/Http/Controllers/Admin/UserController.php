@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Interfaces\RoleInterface;
-use App\Http\Requests\RoleRequest;
+use App\Interfaces\UserInterface;
+use App\Http\Requests\UserRequest;
 
-class RoleController extends Controller
+class UserController extends Controller
 {
     protected $interface;
-    public function __construct(RoleInterface $interface)
+    public function __construct(UserInterface $interface)
     {
         $this->interface = $interface;
     }
@@ -24,6 +24,7 @@ class RoleController extends Controller
         {
             $datatable = true;
         }
+
         return $this->interface->index($datatable);
     }
 
@@ -38,7 +39,7 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(RoleRequest $request)
+    public function store(UserRequest $request)
     {
         return $this->interface->store($request);
     }
@@ -48,7 +49,7 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        return $this->interface->show($id);
+        //
     }
 
     /**
@@ -62,7 +63,7 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(RoleRequest $request, string $id)
+    public function update(UserRequest $request, string $id)
     {
         return $this->interface->update($request,$id);
     }
@@ -72,28 +73,6 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        return $this->interface->destroy($id);
-    }
-
-    public function trash_list(Request $request)
-    {
-        // return 0;
-        $datatable = '';
-        if($request->ajax())
-        {
-            $datatable = true;
-        }
-
-        return $this->interface->trash_list($datatable);
-    }
-
-    public function restore($id)
-    {
-        return $this->interface->restore($id);
-    }
-
-    public function delete($id)
-    {
-        return $this->interface->delete($id);
+        //
     }
 }

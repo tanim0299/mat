@@ -81,7 +81,7 @@ class RoleRepository implements RoleInterface{
                 'user_id' => Auth::user()->id,
                 'slug' => 'create',
                 'description' => 'Create Role which name is '.$request->name,
-                'description_bn' => 'একটি মেনু স্ট্যাটাস পরিবর্তন করেছেন যার নাম '.$request->name,
+                'description_bn' => 'একটি রোল তৈরি করেছেন যার নাম '.$request->name,
             ]);
             toastr()->success(__('role.create_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
@@ -90,36 +90,172 @@ class RoleRepository implements RoleInterface{
         }
     }
 
-    public function show($id){
+    public function show($id)
+    {
+        $data['data'] = Role::withTrashed()->where('id',$id)->first();
+        $data['histories'] = History::where('tag','role')->where('fk_id',$id)->orderBy('time','ASC')->get();
+        return ViewDirective::view($this->path,'show',$data);
+    }
+
+    public function properties($id)
+    {
 
     }
 
-    public function properties($id){
-
+    public function edit($id)
+    {
+        $data = [];
+        $data['data'] = Role::find($id);
+        // return $data['data'];
+        return ViewDirective::view($this->path,'edit',$data);
     }
 
-    public function edit($id){
+    public function update($request, $id)
+    {
+        $data = array(
+            'name' => $request->name,
+            'name_bn' => $request->name_bn,
+        );
 
+        try {
+            Role::where('id',$id)->update($data);
+            ActivityLog::create([
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+                'slug' => 'update',
+                'description' => 'Update Role which name is '.$request->name,
+                'description_bn' => 'একটি রোল সম্পাদন করেছেন যার নাম '.$request->name,
+            ]);
+            History::create([
+                'tag' => 'role',
+                'fk_id' => $id,
+                'type' => 'update',
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+            ]);
+            toastr()->success(__('role.update_message'), __('common.success'), ['timeOut' => 5000]);
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error',$th->getMessage());
+        }
     }
 
-    public function update($data, $id){
-
+    public function destroy($id)
+    {
+        try {
+            Role::where('id',$id)->delete();
+            $role = Role::withTrashed()->where('id',$id)->first();
+            ActivityLog::create([
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+                'slug' => 'destroy',
+                'description' => 'Destroy Role which name is '.$role->name,
+                'description_bn' => 'একটি রোল ডিলেট করেছেন যার নাম '.$role->name,
+            ]);
+            History::create([
+                'tag' => 'role',
+                'fk_id' => $id,
+                'type' => 'destroy',
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+            ]);
+            toastr()->success(__('role.delete_message'), __('common.success'), ['timeOut' => 5000]);
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error',$th->getMessage());
+        }
     }
 
-    public function destroy($id){
+    public function trash_list($datatable)
+    {
+        if($datatable == 1)
+        {
+            $data = Role::onlyTrashed()->get();
+            return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('sl',function($row){
+                return $this->sl = $this->sl +1;
+            })
+            ->addColumn('name',function($row){
+                if(config('app.locale') == 'en')
+                {
+                    return $row->name ?: $row->name_bn;
+                }
+                else
+                {
+                    return $row->name_bn ?: $row->name;
+                }
+            })
+            ->addColumn('action', function($row){
+                $restore_btn = '<a class="dropdown-item" href="'.route('role.restore',$row->id).'"><i class="fa fa-trash-arrow-up"></i> '.__('common.restore').'</a>';
 
+                $delete_btn = '<a onclick="return Sure()" class="dropdown-item text-danger" href="'.route('role.delete',$row->id).'"><i class="fa fa-trash"></i> '.__('common.delete').'</a>';
+
+                $output = '<div class="dropdown font-sans-serif">
+                <a class="btn btn-phoenix-default dropdown-toggle" id="dropdownMenuLink" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.__('common.action').'</a>
+                <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="dropdownMenuLink" style="">'.$restore_btn.' '.$delete_btn.'
+                </div>
+              </div>';
+                return $output;
+            })
+            ->rawColumns(['action','label_name','sl','status'])
+            ->make(true);
+
+        }
+        return ViewDirective::view($this->path,'trash_list');
     }
 
-    public function trash_list($datatable){
-
+    public function restore($id)
+    {
+        try {
+            Role::withTrashed()->where('id',$id)->restore();
+            $role = Role::withTrashed()->where('id',$id)->first();
+            ActivityLog::create([
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+                'slug' => 'restore',
+                'description' => 'Restore Role which name is '.$role->name,
+                'description_bn' => 'একটি রোল পুনুরুদ্ধার করেছেন যার নাম '.$role->name,
+            ]);
+            History::create([
+                'tag' => 'role',
+                'fk_id' => $id,
+                'type' => 'restore',
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+            ]);
+            toastr()->success(__('role.restore_message'), __('common.success'), ['timeOut' => 5000]);
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error',$th->getMessage());
+        }
     }
 
-    public function restore($id){
-
-    }
-
-    public function delete($id){
-
+    public function delete($id)
+    {
+        try {
+            $role = Role::withTrashed()->where('id',$id)->first();
+            ActivityLog::create([
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+                'slug' => 'delete',
+                'description' => 'Permenantly Delete Role which name is '.$role->name,
+                'description_bn' => 'একটি রোল সম্পূর্ণ ডিলেট করেছেন যার নাম '.$role->name,
+            ]);
+            History::where('tag','role')->where('fk_id',$id)->delete();
+            Role::withTrashed()->where('id',$id)->forceDelete();
+            toastr()->success(__('role.delete_message'), __('common.success'), ['timeOut' => 5000]);
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error',$th->getMessage());
+        }
     }
 
     public function print(){

@@ -14,21 +14,21 @@
 
     <!-- link 2 -->
     @slot('link_two')
-    @lang('role.role')
+    @lang('user.user')
     @endslot
     @slot('link_two_url')
-    {{route('role.index')}}
+    {{route('user.index')}}
     @endslot
 
 
     <!-- Active Link -->
     @slot('active_link')
-    @lang('role.role_list')
+    @lang('user.user_list')
     @endslot
 
     <!-- Page Title -->
     @slot('page_title')
-    @lang('role.index_title')
+    @lang('user.index_title')
     @endslot
 
 
@@ -38,7 +38,7 @@
     @endslot
 
     @slot('button_one_route')
-    {{route('role.create')}}
+    {{route('user.create')}}
     @endslot
 
     @slot('button_one_class')
@@ -86,7 +86,11 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>@lang('role.name')</th>
+                            <th>@lang('user.image')</th>
+                            <th>@lang('user.role')</th>
+                            <th>@lang('user.name')</th>
+                            <th>@lang('user.email')</th>
+                            <th>@lang('user.phone')</th>
                             <th>@lang('common.action')</th>
                         </tr>
                     </thead>
@@ -106,10 +110,14 @@ document.addEventListener("DOMContentLoaded", function() {
     $(".myTable").DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('role.index') }}",
+        ajax: "{{ route('user.index') }}",
         columns: [
             {data: 'sl', name: 'sl'},
+            {data : 'profile', name: 'profile'},
+            {data : 'role', name: 'role'},
             {data : 'name', name: 'name'},
+            {data : 'email', name: 'email'},
+            {data : 'phone', name: 'phone'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });

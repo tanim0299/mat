@@ -121,7 +121,10 @@ class UserRepository implements UserInterface{
 
     public function show($id)
     {
-
+        $data = [];
+        $data['data'] = User::find($id);
+        $data['histories'] = History::where('tag','user')->where('fk_id',$id)->orderBy('time','ASC')->get();
+        return ViewDirective::view($this->path,'show',$data);
     }
 
     public function properties($id){
@@ -187,20 +190,146 @@ class UserRepository implements UserInterface{
         }
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
+        try {
+            User::find($id)->delete();
+            $user = User::withTrashed()->where('id',$id)->first();
 
+            History::create([
+                'tag' => 'user',
+                'fk_id' => $id,
+                'type' => 'destroy',
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+            ]);
+
+            ActivityLog::create([
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+                'slug' => 'destroy',
+                'description' => 'Destroy User which name is '.$user->name,
+                'description_bn' => 'একটি ইউজার ডিলেট করেছেন যার নাম '.$user->name,
+            ]);
+
+            toastr()->success(__('user.delete_message'),__('common.success'));
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error',$th->getMessage());
+        }
     }
 
-    public function trash_list($datatable){
+    public function trash_list($datatable)
+    {
+        if($datatable == 1)
+        {
+            $data = User::onlyTrashed()->get();
+            return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('sl',function($row){
+                return $this->sl = $this->sl +1;
+            })
+            ->addColumn('profile',function($row){
+                if(isset($row->image))
+                {
+                    return '<img src="'.public_path().'/UserImage/"'.$row->image.' style="height : 100px;width : 100px;border-radius:100%;">';
+                }
+                else
+                {
+                    $color = '#'.rand(100000,999999);
+                    return '<div style="background:'.$color.'" class="profile-avatar"><b>'.substr($row->name,0,1).'</b></div>';
+                }
+            })
+           ->addColumn('role',function($row){
+            if(isset($row->role_id))
+            {
+                $role = Role::find($row->role_id);
+                if(config('app.locale') == 'en')
+                {
+                    return $role->name ?: $role->name_bn;
+                }
+                else
+                {
+                    return $role->name_bn ?: $role->name;
+                }
+            }
+            else
+            {
+                return '-';
+            }
+           })
+            ->addColumn('action', function($row){
+                $restore_btn = '<a class="dropdown-item" href="'.route('user.restore',$row->id).'"><i class="fa fa-trash-arrow-up"></i> '.__('common.restore').'</a>';
 
+                $delete_btn = '<a onclick="return Sure()" class="dropdown-item text-danger" href="'.route('user.delete',$row->id).'"><i class="fa fa-trash"></i> '.__('common.delete').'</a>';
+
+                $output = '<div class="dropdown font-sans-serif">
+                <a class="btn btn-phoenix-default dropdown-toggle" id="dropdownMenuLink" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.__('common.action').'</a>
+                <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="dropdownMenuLink" style="">'.$restore_btn.' '.$delete_btn.'
+                </div>
+              </div>';
+                return $output;
+            })
+            ->rawColumns(['action','profile','role'])
+            ->make(true);
+
+        }
+        return ViewDirective::view($this->path,'trash_list');
     }
 
-    public function restore($id){
+    public function restore($id)
+    {
+        try {
+            User::withTrashed()->where('id',$id)->restore();
+            $user = User::withTrashed()->where('id',$id)->first();
 
+            History::create([
+                'tag' => 'user',
+                'fk_id' => $id,
+                'type' => 'restore',
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+            ]);
+
+            ActivityLog::create([
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+                'slug' => 'restore',
+                'description' => 'Restore User which name is '.$user->name,
+                'description_bn' => 'একটি ইউজার পুনুরুদ্ধার করেছেন যার নাম '.$user->name,
+            ]);
+
+            toastr()->success(__('user.restore_message'),__('common.success'));
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error',$th->getMessage());
+        }
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
+        try {
+            $user = User::withTrashed()->where('id',$id)->first();
+            History::where('tag','user')->where('fk_id',$id)->delete();
+            ActivityLog::create([
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+                'slug' => 'delete',
+                'description' => 'Delete Permenantly User which name is '.$user->name,
+                'description_bn' => 'একটি ইউজার চিরস্থায়ী ডিলট করেছেন যার নাম '.$user->name,
+            ]);
 
+            User::withTrashed()->where('id',$id)->forceDelete();
+            toastr()->success(__('user.delete_message'),__('common.success'));
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error',$th->getMessage());
+        }
     }
 
     public function print(){

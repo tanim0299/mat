@@ -49,7 +49,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return $this->interface->show($id);
     }
 
     /**
@@ -73,6 +73,27 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        return $this->interface->destroy($id);
+    }
+
+    public function trash_list(Request $request)
+    {
+        $datatable = '';
+        if($request->ajax())
+        {
+            $datatable = true;
+        }
+
+        return $this->interface->trash_list($datatable);
+    }
+
+    public function restore($id)
+    {
+        return $this->interface->restore($id);
+    }
+
+    public function delete($id)
+    {
+        return $this->interface->delete($id);
     }
 }

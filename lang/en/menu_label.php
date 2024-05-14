@@ -17,5 +17,5 @@ return array(
     'trash_title' => 'Trashed Menu Labels',
     'create_message' => 'Menu Label Created Successfully',
     'details' => 'Details',
-
+    'this_menu' => 'This Labels Menu'
 );

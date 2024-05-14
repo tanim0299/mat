@@ -33,3 +33,9 @@ Route::post('change_menu_status',[MenuController::class,'status'])->name('menu.s
 Route::get('/role_trash_list',[RoleController::class,'trash_list'])->name('role.trash_list');
 Route::get('/role_restore/{id}',[RoleController::class,'restore'])->name('role.restore');
 Route::get('/role_delete/{id}',[RoleController::class,'delete'])->name('role.delete');
+Route::get('/role_permission/{id}',[RoleController::class,'permission'])->name('role.permission');
+
+//use extra routes;
+Route::get('/user_trash_list',[UserController::class,'trash_list'])->name('user.trash_list');
+Route::get('restore_user/{id}',[UserController::class,'restore'])->name('user.restore');
+Route::get('delete_user/{id}',[UserController::class,'delete'])->name('user.delete');

@@ -17,4 +17,5 @@ return array(
     'restore_message' => 'Role Restored Successfully',
     'delete_message' => 'Role Delete Successfully',
     'edit_role' => 'Edit Roles',
+    'permission' => 'Permission',
 );

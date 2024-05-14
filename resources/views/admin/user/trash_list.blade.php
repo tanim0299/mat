@@ -23,22 +23,22 @@
 
     <!-- Active Link -->
     @slot('active_link')
-    @lang('user.user_list')
+    @lang('user.trash_list')
     @endslot
 
     <!-- Page Title -->
     @slot('page_title')
-    @lang('user.index_title')
+    @lang('user.trash_list')
     @endslot
 
 
     <!-- button one -->
     @slot('button_one_name')
-    @lang('common.create')
+    @lang('common.view')
     @endslot
 
     @slot('button_one_route')
-    {{route('user.create')}}
+    {{route('user.index')}}
     @endslot
 
     @slot('button_one_class')
@@ -46,26 +46,10 @@
     @endslot
 
     @slot('button_one_icon')
-    <i class="fa fa-plus"></i>
-    @endslot
-
-
-    <!-- button two -->
-    @slot('button_two_name')
-    @lang('common.trash_list')
-    @endslot
-
-    @slot('button_two_route')
-    {{route('user.trash_list')}}
-    @endslot
-
-    @slot('button_two_class')
-    btn btn-sm btn-danger
-    @endslot
-
-    @slot('button_two_icon')
     <i class="fa fa-eye"></i>
     @endslot
+
+
 
 
     @endcomponent
@@ -110,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
     $(".myTable").DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('user.index') }}",
+        ajax: "{{ route('user.trash_list') }}",
         columns: [
             {data: 'sl', name: 'sl'},
             {data : 'profile', name: 'profile'},

@@ -87,6 +87,7 @@
                         <tr>
                             <th>#</th>
                             <th>@lang('role.name')</th>
+                            <th>@lang('role.permission')</th>
                             <th>@lang('common.action')</th>
                         </tr>
                     </thead>
@@ -110,6 +111,7 @@ document.addEventListener("DOMContentLoaded", function() {
         columns: [
             {data: 'sl', name: 'sl'},
             {data : 'name', name: 'name'},
+            {data : 'permission', name: 'permission'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });

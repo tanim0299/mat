@@ -8,6 +8,7 @@ use Brian2694\Toastr\Facades\Toastr;
 use Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\History;
+use App\Models\Menu;
 
 class MenuLabelRepository implements MenuLabelInterface {
     protected $path,$sl;
@@ -118,6 +119,7 @@ class MenuLabelRepository implements MenuLabelInterface {
     {
         $data['data'] = MenuLabel::withTrashed()->where('id',$id)->first();
         $data['histories'] = History::where('tag','menu_label')->where('fk_id',$id)->orderBy('time','ASC')->get();
+        $data['this_menu'] = Menu::withTrashed()->where('label_id',$id)->get();
         return ViewDirective::view($this->path,'show',$data);
     }
 

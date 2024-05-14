@@ -213,6 +213,7 @@ class MenuRepository implements MenuInterface{
     {
         $data['data'] = Menu::withTrashed()->where('id',$id)->first();
         $data['histories'] = History::where('tag','menu')->where('fk_id',$id)->orderBy('time','ASC')->get();
+        $data['this_menu'] = Menu::withTrashed()->where('parent_id',$id)->get();
         return ViewDirective::view($this->path,'show',$data);
     }
 

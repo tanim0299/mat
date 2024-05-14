@@ -35,6 +35,9 @@ class RoleRepository implements RoleInterface{
                     return $row->name_bn ?: $row->name;
                 }
             })
+            ->addColumn('permission',function($row){
+                return '<a href="'.__(route('role.permission',$row->id)).'" class="btn btn-sm btn-info"><i class="fa fa-key"></i></a>';
+            })
             ->addColumn('action', function($row){
                 $show_btn = '<a class="dropdown-item" href="'.route('role.show',$row->id).'"><i class="fa fa-eye"></i> '.__('common.show').'</a>';
 
@@ -53,7 +56,7 @@ class RoleRepository implements RoleInterface{
               </div>';
                 return $output;
             })
-            ->rawColumns(['action','label_name','sl','status'])
+            ->rawColumns(['action','label_name','sl','status','permission'])
             ->make(true);
 
         }

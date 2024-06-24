@@ -8,7 +8,7 @@
     @lang('common.dashboard')
     @endslot
     @slot('link_one_url')
-    {{route('admin.home')}}
+    {{route('admin.view')}}
     @endslot
 
 
@@ -32,6 +32,7 @@
     @endslot
 
 
+    @if(Auth::user()->can('Menu Label view'))
     <!-- button one -->
     @slot('button_one_name')
     @lang('common.view')
@@ -49,12 +50,14 @@
     <i class="fa fa-eye"></i>
     @endslot
 
+    @endif
+
 
     @endcomponent
 
     <div class="card">
         <div class="card-body">
-            
+
             <form method="post" action="{{route('menu_label.update',$data['data']->id)}}">
                 @csrf
                 @method('PUT')

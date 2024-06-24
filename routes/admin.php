@@ -6,13 +6,15 @@ use App\Http\Controllers\Admin\MenuLabelController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\StoreController;
 
-Route::get('/',[BackendController::class,'home'])->name('admin.home');
+Route::get('/',[BackendController::class,'home'])->name('admin.view');
 Route::resources([
     'menu_label' => MenuLabelController::class,
     'menu' => MenuController::class,
     'role' => RoleController::class,
     'user' => UserController::class,
+    'store' => StoreController::class,
 ]);
 
 // menu_label_extra_routes
@@ -34,8 +36,15 @@ Route::get('/role_trash_list',[RoleController::class,'trash_list'])->name('role.
 Route::get('/role_restore/{id}',[RoleController::class,'restore'])->name('role.restore');
 Route::get('/role_delete/{id}',[RoleController::class,'delete'])->name('role.delete');
 Route::get('/role_permission/{id}',[RoleController::class,'permission'])->name('role.permission');
+Route::post('/permission_store/{id}',[RoleController::class,'permission_store'])->name('role.permission_store');
 
 //use extra routes;
 Route::get('/user_trash_list',[UserController::class,'trash_list'])->name('user.trash_list');
 Route::get('restore_user/{id}',[UserController::class,'restore'])->name('user.restore');
 Route::get('delete_user/{id}',[UserController::class,'delete'])->name('user.delete');
+
+//store extra routes;
+Route::get('/store_trash_list',[StoreController::class,'trash_list'])->name('store.trash_list');
+Route::get('/store_restore/{id}',[StoreController::class,'restore'])->name('store.restore');
+Route::get('/store_delete/{id}',[StoreController::class,'delete'])->name('store.delete');
+Route::post('change_store_status',[StoreController::class,'status'])->name('store.status');

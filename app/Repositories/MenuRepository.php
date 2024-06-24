@@ -93,35 +93,65 @@ class MenuRepository implements MenuInterface{
                 }
             })
             ->addColumn('status',function($row){
-                if($row->status == 1)
+                if(Auth::user()->can('Menu status'))
                 {
-                    $checked = 'checked';
+                    if($row->status == 1)
+                    {
+                        $checked = 'checked';
+                    }
+                    else
+                    {
+                        $checked = 'false';
+                    }
+                    return '<div class="checkbox-wrapper-51">
+                    <input onchange="return changeMenuStatus('.$row->id.')" id="cbx-51" type="checkbox" '.$checked.'>
+                    <label class="toggle" for="cbx-51">
+                      <span>
+                        <svg viewBox="0 0 10 10" height="10px" width="10px">
+                          <path d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z"></path>
+                        </svg>
+                      </span>
+                    </label>
+                  </div>';
                 }
                 else
                 {
-                    $checked = 'false';
+                    return '';
                 }
-                return '<div class="checkbox-wrapper-51">
-                <input onchange="return changeMenuStatus('.$row->id.')" id="cbx-51" type="checkbox" '.$checked.'>
-                <label class="toggle" for="cbx-51">
-                  <span>
-                    <svg viewBox="0 0 10 10" height="10px" width="10px">
-                      <path d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z"></path>
-                    </svg>
-                  </span>
-                </label>
-              </div>';
             })
             ->addColumn('action', function($row){
-                $show_btn = '<a class="dropdown-item" href="'.route('menu.show',$row->id).'"><i class="fa fa-eye"></i> '.__('common.show').'</a>';
+                if(Auth::user()->can('Menu show'))
+                {
+                    $show_btn = '<a class="dropdown-item" href="'.route('menu.show',$row->id).'"><i class="fa fa-eye"></i> '.__('common.show').'</a>';
+                }
+                else
+                {
+                    $show_btn ='';
+                }
 
-                $edit_btn = '<a class="dropdown-item" href="'.route('menu.edit',$row->id).'"><i class="fa fa-edit"></i> '.__('common.edit').'</a>';
+                if(Auth::user()->can('Menu edit'))
+                {
+                    $edit_btn = '<a class="dropdown-item" href="'.route('menu.edit',$row->id).'"><i class="fa fa-edit"></i> '.__('common.edit').'</a>';
+                }
+                else
+                {
+                    $edit_btn ='';
+                }
 
-                $delete_btn = '<form id="" method="post" action="'.route('menu.destroy',$row->id).'">
-                '.csrf_field().'
-                '.method_field('DELETE').'
-                <button onclick="return Sure()" type="post" class="dropdown-item text-danger"><i class="fa fa-trash"></i> '.__('common.destroy').'</button>
-                </form>';
+                if(Auth::user()->can('Menu destroy'))
+                {
+                    $delete_btn = '<form id="" method="post" action="'.route('menu.destroy',$row->id).'">
+                    '.csrf_field().'
+                    '.method_field('DELETE').'
+                    <button onclick="return Sure()" type="post" class="dropdown-item text-danger"><i class="fa fa-trash"></i> '.__('common.destroy').'</button>
+                    </form>';
+                }
+                else
+                {
+                    $delete_btn ='';
+                }
+
+
 
                 $output = '<div class="dropdown font-sans-serif">
                 <a class="btn btn-phoenix-default dropdown-toggle" id="dropdownMenuLink" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.__('common.action').'</a>
@@ -417,29 +447,51 @@ class MenuRepository implements MenuInterface{
                 }
             })
             ->addColumn('status',function($row){
-                if($row->status == 1)
+                if(Auth::user()->can('Menu status'))
                 {
-                    $checked = 'checked';
+                    if($row->status == 1)
+                    {
+                        $checked = 'checked';
+                    }
+                    else
+                    {
+                        $checked = 'false';
+                    }
+                    return '<div class="checkbox-wrapper-51">
+                    <input onchange="return changeMenuStatus('.$row->id.')" id="cbx-51" type="checkbox" '.$checked.'>
+                    <label class="toggle" for="cbx-51">
+                      <span>
+                        <svg viewBox="0 0 10 10" height="10px" width="10px">
+                          <path d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z"></path>
+                        </svg>
+                      </span>
+                    </label>
+                  </div>';
                 }
                 else
                 {
-                    $checked = 'false';
+                    return '';
                 }
-                return '<div class="checkbox-wrapper-51">
-                <input onchange="return changeMenuStatus('.$row->id.')" id="cbx-51" type="checkbox" '.$checked.'>
-                <label class="toggle" for="cbx-51">
-                  <span>
-                    <svg viewBox="0 0 10 10" height="10px" width="10px">
-                      <path d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z"></path>
-                    </svg>
-                  </span>
-                </label>
-              </div>';
             })
             ->addColumn('action', function($row){
-                $restore_btn = '<a class="dropdown-item" href="'.route('menu.restore',$row->id).'"><i class="fa fa-trash-arrow-up"></i> '.__('common.restore').'</a>';
+                if(Auth::user()->can('Menu restore'))
+                {
+                    $restore_btn = '<a class="dropdown-item" href="'.route('menu.restore',$row->id).'"><i class="fa fa-trash-arrow-up"></i> '.__('common.restore').'</a>';
+                }
+                else
+                {
+                    $restore_btn = '';
+                }
 
-                $delete_btn = '<a onclick="return Sure()" class="dropdown-item text-danger" href="'.route('menu.delete',$row->id).'"><i class="fa fa-trash"></i> '.__('common.delete').'</a>';
+                if(Auth::user()->can('Menu delete'))
+                {
+                    $delete_btn = '<a onclick="return Sure()" class="dropdown-item text-danger" href="'.route('menu.delete',$row->id).'"><i class="fa fa-trash"></i> '.__('common.delete').'</a>';
+                }
+                else
+                {
+                    $delete_btn = '';
+                }
+
 
                 $output = '<div class="dropdown font-sans-serif">
                 <a class="btn btn-phoenix-default dropdown-toggle" id="dropdownMenuLink" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.__('common.action').'</a>

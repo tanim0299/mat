@@ -8,7 +8,7 @@
     @lang('common.dashboard')
     @endslot
     @slot('link_one_url')
-    {{route('admin.home')}}
+    {{route('admin.view')}}
     @endslot
 
 
@@ -33,6 +33,7 @@
 
 
     <!-- button one -->
+    @if(Auth::user()->can('Menu Label create'))
     @slot('button_one_name')
     @lang('common.create')
     @endslot
@@ -49,7 +50,10 @@
     <i class="fa fa-plus"></i>
     @endslot
 
+    @endif
 
+
+    @if(Auth::user()->can('Menu Label trash'))
     <!-- button two -->
     @slot('button_two_name')
     @lang('common.trash_list')
@@ -66,6 +70,8 @@
     @slot('button_two_icon')
     <i class="fa fa-eye"></i>
     @endslot
+
+    @endif
 
 
     @endcomponent

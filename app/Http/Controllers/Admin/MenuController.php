@@ -13,6 +13,14 @@ class MenuController extends Controller
     public function __construct(MenuInterface $interface)
     {
         $this->interface = $interface;
+        $this->middleware(['permission:Menu view'])->only(['index']);
+        $this->middleware(['permission:Menu create'])->only(['create']);
+        $this->middleware(['permission:Menu edit'])->only(['edit']);
+        $this->middleware(['permission:Menu destroy'])->only(['destroy']);
+        $this->middleware(['permission:Menu status'])->only(['status']);
+        $this->middleware(['permission:Menu restore'])->only(['restore']);
+        $this->middleware(['permission:Menu delete'])->only(['delete']);
+        $this->middleware(['permission:Menu show'])->only(['show']);
     }
     /**
      * Display a listing of the resource.
@@ -23,6 +31,7 @@ class MenuController extends Controller
         if($request->ajax())
         {
             $datatable = true;
+            // return 0;
         }
         return $this->interface->index($datatable);
     }

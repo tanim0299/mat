@@ -13,6 +13,14 @@ class MenuLabelController extends Controller
     public function __construct(MenuLabelInterface $interface)
     {
         $this->interface = $interface;
+        $this->middleware(['permission:Menu Label view'])->only(['index']);
+        $this->middleware(['permission:Menu Label create'])->only(['create']);
+        $this->middleware(['permission:Menu Label edit'])->only(['edit']);
+        $this->middleware(['permission:Menu Label destroy'])->only(['destroy']);
+        $this->middleware(['permission:Menu Label status'])->only(['status']);
+        $this->middleware(['permission:Menu Label restore'])->only(['restore']);
+        $this->middleware(['permission:Menu Label delete'])->only(['delete']);
+        $this->middleware(['permission:Menu Label show'])->only(['show']);
     }
     /**
      * Display a listing of the resource.

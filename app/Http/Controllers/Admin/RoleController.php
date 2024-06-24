@@ -13,6 +13,14 @@ class RoleController extends Controller
     public function __construct(RoleInterface $interface)
     {
         $this->interface = $interface;
+        $this->middleware(['permission:Role view'])->only(['index']);
+        $this->middleware(['permission:Role create'])->only(['create']);
+        $this->middleware(['permission:Role edit'])->only(['edit']);
+        $this->middleware(['permission:Role destroy'])->only(['destroy']);
+        // $this->middleware(['permission:Role status'])->only(['status']);
+        $this->middleware(['permission:Role restore'])->only(['restore']);
+        $this->middleware(['permission:Role delete'])->only(['delete']);
+        $this->middleware(['permission:Role show'])->only(['show']);
     }
     /**
      * Display a listing of the resource.
@@ -95,5 +103,14 @@ class RoleController extends Controller
     public function delete($id)
     {
         return $this->interface->delete($id);
+    }
+
+    public function permission($id)
+    {
+        return $this->interface->permission($id);
+    }
+    public function permission_store(Request $request, $id)
+    {
+        return $this->interface->permission_store($request, $id);
     }
 }

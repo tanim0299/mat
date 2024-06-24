@@ -8,7 +8,7 @@
     @lang('common.dashboard')
     @endslot
     @slot('link_one_url')
-    {{route('admin.home')}}
+    {{route('admin.view')}}
     @endslot
 
 

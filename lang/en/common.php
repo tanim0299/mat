@@ -41,5 +41,6 @@ return array(
     'select_one' => 'Select One',
     'restore' => 'Restore',
     'delete' => 'Delete',
+    'select_all' => 'Select All'
 
 );

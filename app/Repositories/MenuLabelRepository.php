@@ -49,34 +49,64 @@ class MenuLabelRepository implements MenuLabelInterface {
                 }
             })
             ->addColumn('status',function($row){
-                if($row->status == 1)
+                if(Auth::user()->can('Menu Label status'))
                 {
-                    $checked = 'checked';
+                    if($row->status == 1)
+                    {
+                        $checked = 'checked';
+                    }
+                    else
+                    {
+                        $checked = 'false';
+                    }
+                    return '<div class="checkbox-wrapper-51">
+                    <input onchange="return changeMenuLabelStatus('.$row->id.')" id="cbx-51" type="checkbox" '.$checked.'>
+                    <label class="toggle" for="cbx-51">
+                      <span>
+                        <svg viewBox="0 0 10 10" height="10px" width="10px">
+                          <path d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z"></path>
+                        </svg>
+                      </span>
+                    </label>
+                  </div>';
                 }
                 else
                 {
-                    $checked = 'false';
+                    return '';
                 }
-                return '<div class="checkbox-wrapper-51">
-                <input onchange="return changeMenuLabelStatus('.$row->id.')" id="cbx-51" type="checkbox" '.$checked.'>
-                <label class="toggle" for="cbx-51">
-                  <span>
-                    <svg viewBox="0 0 10 10" height="10px" width="10px">
-                      <path d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z"></path>
-                    </svg>
-                  </span>
-                </label>
-              </div>';
             })
             ->addColumn('action', function($row){
-                $show_btn = '<a style="float:left;margin-right:5px;" href="'.route('menu_label.show',$row->id).'" class="btn btn-sm btn-success"><i class="fa fa-eye"></i></a>';
-                $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('menu_label.edit',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>';
+                if(Auth::user()->can('Menu Label show'))
+                {
+                    $show_btn = '<a style="float:left;margin-right:5px;" href="'.route('menu_label.show',$row->id).'" class="btn btn-sm btn-success"><i class="fa fa-eye"></i></a>';
+                }
+                else
+                {
+                    $show_btn = '';
+                }
 
-                $delete_btn = '<form id="" method="post" action="'.route('menu_label.destroy',$row->id).'">
-                '.csrf_field().'
-                '.method_field('DELETE').'
-                <button onclick="return Sure()" type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
-                </form>';
+                if(Auth::user()->can('Menu Label edit'))
+                {
+                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('menu_label.edit',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>';
+                }
+                else
+                {
+                    $edit_btn ='';
+                }
+
+                if(Auth::user()->can('Menu Label destroy'))
+                {
+                    $delete_btn = '<form id="" method="post" action="'.route('menu_label.destroy',$row->id).'">
+                    '.csrf_field().'
+                    '.method_field('DELETE').'
+                    <button onclick="return Sure()" type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                    </form>';
+                }
+                else
+                {
+                    $delete_btn ='';
+                }
+
 
 
                 $return_btn = $show_btn.''.$edit_btn.''.$delete_btn;
@@ -272,28 +302,50 @@ class MenuLabelRepository implements MenuLabelInterface {
                 }
             })
             ->addColumn('status',function($row){
-                if($row->status == 1)
+                if(Auth::user()->can('Menu Label status'))
                 {
-                    $checked = 'checked';
+                    if($row->status == 1)
+                    {
+                        $checked = 'checked';
+                    }
+                    else
+                    {
+                        $checked = 'false';
+                    }
+                    return '<div class="checkbox-wrapper-51">
+                    <input onchange="return changeMenuLabelStatus('.$row->id.')" id="cbx-51" type="checkbox" '.$checked.'>
+                    <label class="toggle" for="cbx-51">
+                      <span>
+                        <svg viewBox="0 0 10 10" height="10px" width="10px">
+                          <path d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z"></path>
+                        </svg>
+                      </span>
+                    </label>
+                  </div>';
                 }
                 else
                 {
-                    $checked = 'false';
+                    return '';
                 }
-                return '<div class="checkbox-wrapper-51">
-                <input onchange="return changeMenuLabelStatus('.$row->id.')" id="cbx-51" type="checkbox" '.$checked.'>
-                <label class="toggle" for="cbx-51">
-                  <span>
-                    <svg viewBox="0 0 10 10" height="10px" width="10px">
-                      <path d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z"></path>
-                    </svg>
-                  </span>
-                </label>
-              </div>';
             })
             ->addColumn('action', function($row){
-                $restore_btn = '<a href="'.route('menu_label.restore',$row->id).'" class="btn btn-sm btn-warning"><i class="fa fa-trash-arrow-up"></i></a>';
-                $delete_btn = '<a onclick="return Sure();" href="'.route('menu_label.delete',$row->id).'" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>';
+                if(Auth::user()->can('Menu Label restore'))
+                {
+                    $restore_btn = '<a href="'.route('menu_label.restore',$row->id).'" class="btn btn-sm btn-warning"><i class="fa fa-trash-arrow-up"></i></a>';
+                }
+                else
+                {
+                    $restore_btn ='';
+                }
+
+                if(Auth::user()->can('Menu Label delete'))
+                {
+                    $delete_btn = '<a onclick="return Sure();" href="'.route('menu_label.delete',$row->id).'" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>';
+                }
+                else
+                {
+                    $delete_btn = '';
+                }
 
                 $return_btn = $restore_btn.''.$delete_btn;
 

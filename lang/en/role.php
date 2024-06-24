@@ -18,4 +18,5 @@ return array(
     'delete_message' => 'Role Delete Successfully',
     'edit_role' => 'Edit Roles',
     'permission' => 'Permission',
+    'permission_message' => 'Permission Changed',
 );

@@ -13,6 +13,14 @@ class UserController extends Controller
     public function __construct(UserInterface $interface)
     {
         $this->interface = $interface;
+        $this->middleware(['permission:Users view'])->only(['index']);
+        $this->middleware(['permission:Users create'])->only(['create']);
+        $this->middleware(['permission:Users edit'])->only(['edit']);
+        $this->middleware(['permission:Users destroy'])->only(['destroy']);
+        // $this->middleware(['permission:Users status'])->only(['status']);
+        $this->middleware(['permission:Users restore'])->only(['restore']);
+        $this->middleware(['permission:Users delete'])->only(['delete']);
+        $this->middleware(['permission:Users show'])->only(['show']);
     }
     /**
      * Display a listing of the resource.

@@ -8,7 +8,7 @@
     @lang('common.dashboard')
     @endslot
     @slot('link_one_url')
-    {{route('admin.home')}}
+    {{route('admin.view')}}
     @endslot
 
 
@@ -31,6 +31,8 @@
     @lang('menu.trash_title')
     @endslot
 
+    @if(Auth::user()->can('Menu view'))
+
     <!-- button two -->
     @slot('button_two_name')
     @lang('common.view')
@@ -47,6 +49,8 @@
     @slot('button_two_icon')
     <i class="fa fa-eye"></i>
     @endslot
+
+    @endif
 
 
     @endcomponent

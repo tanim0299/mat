@@ -8,7 +8,7 @@
     @lang('common.dashboard')
     @endslot
     @slot('link_one_url')
-    {{route('admin.home')}}
+    {{route('admin.view')}}
     @endslot
 
 
@@ -23,7 +23,7 @@
 
     <!-- Active Link -->
     @slot('active_link')
-    @lang('menu_label.label_trash_list')
+    @lang('menu_label.trash_title')
     @endslot
 
     <!-- Page Title -->
@@ -32,6 +32,7 @@
     @endslot
 
 
+    @if(Auth::user()->can('Menu Label view'))
     <!-- button one -->
     @slot('button_one_name')
     @lang('common.view')
@@ -48,6 +49,8 @@
     @slot('button_one_icon')
     <i class="fa fa-eye"></i>
     @endslot
+
+    @endif
 
 
 

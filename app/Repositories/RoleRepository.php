@@ -7,6 +7,7 @@ use App\Models\History;
 use App\Models\ActivityLog;
 use Auth;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Menu;
 
 class RoleRepository implements RoleInterface{
     protected $path,$sl;
@@ -36,18 +37,48 @@ class RoleRepository implements RoleInterface{
                 }
             })
             ->addColumn('permission',function($row){
-                return '<a href="'.__(route('role.permission',$row->id)).'" class="btn btn-sm btn-info"><i class="fa fa-key"></i></a>';
+                if(Auth::user()->can('Role show'))
+                {
+                    return '<a href="'.__(route('role.permission',$row->id)).'" class="btn btn-sm btn-info"><i class="fa fa-key"></i></a>';
+                }
+                else
+                {
+                    return '';
+                }
             })
             ->addColumn('action', function($row){
-                $show_btn = '<a class="dropdown-item" href="'.route('role.show',$row->id).'"><i class="fa fa-eye"></i> '.__('common.show').'</a>';
+                if(Auth::user()->can('Role show'))
+                {
+                    $show_btn = '<a class="dropdown-item" href="'.route('role.show',$row->id).'"><i class="fa fa-eye"></i> '.__('common.show').'</a>';
+                }
+                else
+                {
+                    $show_btn ='';
+                }
 
-                $edit_btn = '<a class="dropdown-item" href="'.route('role.edit',$row->id).'"><i class="fa fa-edit"></i> '.__('common.edit').'</a>';
+                if(Auth::user()->can('Role edit'))
+                {
+                    $edit_btn = '<a class="dropdown-item" href="'.route('role.edit',$row->id).'"><i class="fa fa-edit"></i> '.__('common.edit').'</a>';
+                }
+                else
+                {
+                    $edit_btn ='';
+                }
 
-                $delete_btn = '<form id="" method="post" action="'.route('role.destroy',$row->id).'">
-                '.csrf_field().'
-                '.method_field('DELETE').'
-                <button onclick="return Sure()" type="post" class="dropdown-item text-danger"><i class="fa fa-trash"></i> '.__('common.destroy').'</button>
-                </form>';
+                if(Auth::user()->can('Role destroy'))
+                {
+                    $delete_btn = '<form id="" method="post" action="'.route('role.destroy',$row->id).'">
+                    '.csrf_field().'
+                    '.method_field('DELETE').'
+                    <button onclick="return Sure()" type="post" class="dropdown-item text-danger"><i class="fa fa-trash"></i> '.__('common.destroy').'</button>
+                    </form>';
+                }
+                else
+                {
+                    $delete_btn ='';
+                }
+
+
 
                 $output = '<div class="dropdown font-sans-serif">
                 <a class="btn btn-phoenix-default dropdown-toggle" id="dropdownMenuLink" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.__('common.action').'</a>
@@ -194,9 +225,24 @@ class RoleRepository implements RoleInterface{
                 }
             })
             ->addColumn('action', function($row){
-                $restore_btn = '<a class="dropdown-item" href="'.route('role.restore',$row->id).'"><i class="fa fa-trash-arrow-up"></i> '.__('common.restore').'</a>';
+                if(Auth::user()->can('Role restore'))
+                {
+                    $restore_btn = '<a class="dropdown-item" href="'.route('role.restore',$row->id).'"><i class="fa fa-trash-arrow-up"></i> '.__('common.restore').'</a>';
+                }
+                else
+                {
+                    $restore_btn ='';
+                }
 
-                $delete_btn = '<a onclick="return Sure()" class="dropdown-item text-danger" href="'.route('role.delete',$row->id).'"><i class="fa fa-trash"></i> '.__('common.delete').'</a>';
+                if(Auth::user()->can('Role delete'))
+                {
+                    $delete_btn = '<a onclick="return Sure()" class="dropdown-item text-danger" href="'.route('role.delete',$row->id).'"><i class="fa fa-trash"></i> '.__('common.delete').'</a>';
+                }
+                else
+                {
+                    $delete_btn = '';
+                }
+
 
                 $output = '<div class="dropdown font-sans-serif">
                 <a class="btn btn-phoenix-default dropdown-toggle" id="dropdownMenuLink" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.__('common.action').'</a>
@@ -261,7 +307,32 @@ class RoleRepository implements RoleInterface{
         }
     }
 
-    public function print(){
+    public function print()
+    {
 
+    }
+
+    public function permission($id)
+    {
+        $data['menu'] = Menu::where('type','!=',1)->get();
+        $data['role'] = Role::find($id);
+        // return $data['menu'];
+        return ViewDirective::view($this->path,'permission',$data);
+    }
+
+    public function permission_store($request, $id)
+    {
+        $role = Role::find($id);
+        $role->syncPermissions($request->permission);
+        ActivityLog::create([
+            'date' => date('Y-m-d'),
+            'time' => date('H:i:s'),
+            'user_id' => Auth::user()->id,
+            'slug' => 'permission',
+            'description' => 'Have change permission of a role which name is '.$role->name,
+            'description_bn' => 'একটি রোল এর পারমিশন পরিবর্তন করেছেন যার নাম '.$role->name,
+        ]);
+        toastr()->success(__('role.permission_message'), __('common.success'), ['timeOut' => 5000]);
+        return redirect()->back();
     }
 }

@@ -184,6 +184,7 @@ class MenuRepository implements MenuInterface{
             'type' => $request->type,
             'status' => $request->status,
             'position' => $request->position,
+            'order_by' => $request->order_by,
         );
 
         if($request->type == 1)
@@ -274,6 +275,7 @@ class MenuRepository implements MenuInterface{
             'type' => $request->type,
             'status' => $request->status,
             'position' => $request->position,
+            'order_by' => $request->order_by,
         );
 
         Permission::where('parent',$menu->system_name)->delete();

@@ -29,7 +29,7 @@ class UserRepository implements UserInterface{
             ->addColumn('profile',function($row){
                 if(isset($row->image))
                 {
-                    return '<img src="'.public_path().'/UserImage/"'.$row->image.' style="height : 100px;width : 100px;border-radius:100%;">';
+                    return '<img src="'.asset('UserImages/'.$row->image).'" class="img-fluid" style="height:50px;width : 50px;border-radius:100%">';
                 }
                 else
                 {
@@ -372,5 +372,92 @@ class UserRepository implements UserInterface{
 
     public function print(){
 
+    }
+
+
+    public function profile($id)
+    {
+        $data['data'] = User::find($id);
+        return ViewDirective::view($this->path,'profile',$data);
+    }
+
+    public function profile_update($request,$id)
+    {
+        try{
+            if($request->type == 'file')
+            {
+                $file = $request->file('file');
+
+                if($file)
+                {
+                    $pathImage = User::find($id);
+                    if(isset($pathImage->image))
+                    {
+                        $path = public_path().'/UserImages/'.$pathImage->image;
+                        unlink($path);
+                    }
+                }
+
+                if($file)
+                {
+                    $imageName = rand().'.'.$file->getClientOriginalExtension();
+                    $file->move(public_path().'/UserImages/',$imageName);
+                    User::find($id)->update([
+                        'image' => $imageName,
+                    ]);
+                }
+            }
+            else
+            {
+                $folderPath = public_path('UserImages/'); //create folder upload public/upload
+
+                $image_parts = explode(";base64,", $request->file);
+                $image_type_aux = explode("image/", $image_parts[0]);
+                $image_type = $image_type_aux[1];
+                $image_base64 = base64_decode($image_parts[1]);
+
+                $imageName = rand() . '.png';
+
+                $imageFullPath = $folderPath.$imageName;
+
+                file_put_contents($imageFullPath, $image_base64);
+
+                $pathImage = User::find($id);
+                if(isset($pathImage->image))
+                {
+                    $path = public_path().'/UserImages/'.$pathImage->image;
+                    unlink($path);
+                }
+
+                User::find($id)->update([
+                    'image' => $imageName,
+                ]);
+            }
+
+            $user = User::find($id);
+
+            History::create([
+                'tag' => 'user',
+                'fk_id' => $id,
+                'type' => 'profile_update',
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+            ]);
+
+            ActivityLog::create([
+                'date' => date('Y-m-d'),
+                'time' => date('H:i:s'),
+                'user_id' => Auth::user()->id,
+                'slug' => 'update',
+                'description' => 'Update Profile Picture which name is '.$user->name,
+                'description_bn' => 'একটি ইউজার প্রোফাইল পরিবর্তন করেছেন যার নাম '.$user->name,
+            ]);
+
+            toastr()->success(__('user.profile_update'),__('common.success'));
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error',$th->getMessage());
+        }
     }
 }

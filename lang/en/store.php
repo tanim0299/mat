@@ -20,4 +20,5 @@ return array(
     'delete_message' => 'Store Deleted Successfully',
     'trash_title' => 'Store Trashed',
     'restore_message' => 'Store Restored',
+    'manage' => 'Manage',
 );

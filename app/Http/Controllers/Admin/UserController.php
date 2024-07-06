@@ -104,4 +104,14 @@ class UserController extends Controller
     {
         return $this->interface->delete($id);
     }
+
+    public function profile($id)
+    {
+        return $this->interface->profile($id);
+    }
+
+    public function profile_update(Request $request,$id)
+    {
+        return $this->interface->profile_update($request,$id);
+    }
 }

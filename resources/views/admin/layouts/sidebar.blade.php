@@ -7,7 +7,7 @@
             $label = App\Models\MenuLabel::where('type','cms')->where('status',1)->get();
             $current_route = Route::currentRouteName();
             $explodeRoute = explode('.',$current_route);
-            if($explodeRoute[1] == 'index')
+            if($explodeRoute[0] == 'store' && $explodeRoute[1] == 'index')
             {
                 $currentMenuID = App\Models\Menu::where('route',$explodeRoute[0])->where('slug',$explodeRoute[1])->first();
             }

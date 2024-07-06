@@ -111,6 +111,30 @@
   stroke-dasharray: 25;
   stroke-dashoffset: 25;
 }
+
+img.profile.img-fluid {
+    height: 120px;
+    width: 120px;
+    border-radius: 100%;
+}
+.profile_links ul {
+    padding: 0px;
+}
+
+.profile_links ul li {
+    list-style: none;
+    display: block;
+    border-bottom: 1px dashed lightgray;
+    padding: 10px;
+}
+.profile_links ul li a {
+    text-decoration: none;
+    color: black;
+}
+li.nav-profile.active {
+    background: #ededed;
+    border-left: 3px solid orange;
+}
   </style>
 
   <body>
@@ -209,7 +233,11 @@
               </li>
               <li class="nav-item dropdown"><a class="nav-link lh-1 px-0 ms-5" id="navbarDropdownUser" href="#!" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <div class="avatar avatar-l ">
-                    <img class="rounded-circle" src="{{ asset('backend') }}/assets/img/team/57.png" alt="" />
+                    @if(isset(Auth::user()->image))
+                    <img class="rounded-circle" src="{{ asset('UserImages') }}/{{ Auth::user()->image }}" alt="" />
+                    @else
+                    <div style="background:#456567;" class="profile-avatar"><b>{{substr(Auth::user()->name,0,1)}}</b></div>
+                    @endif
                   </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 dropdown-profile shadow border border-300" aria-labelledby="navbarDropdownUser">
@@ -217,15 +245,19 @@
                     <div class="card-body p-0">
                       <div class="text-center pt-4 pb-3">
                         <div class="avatar avatar-xl ">
-                          <img class="rounded-circle" src="{{ asset('backend') }}/assets/img/team/57.png" alt="" />
+                            @if(isset(Auth::user()->image))
+                            <img class="rounded-circle" src="{{ asset('UserImages') }}/{{ Auth::user()->image }}" alt="" />
+                            @else
+                            <div style="background:#456567;" class="profile-avatar"><b>{{substr(Auth::user()->name,0,1)}}</b></div>
+                            @endif
                         </div>
-                        <h6 class="mt-2">Jerry Seinfield</h6>
+                        <h6 class="mt-2">{{Auth::user()->name}}</h6>
                       </div>
-                      <div class="mb-3 mx-3"><input class="form-control form-control-sm" id="statusUpdateInput" type="text" placeholder="Update your status" /></div>
+
                     </div>
                     <div class="overflow-auto scrollbar" style="height: 10rem;">
                       <ul class="nav d-flex flex-column mb-2 pb-1">
-                        <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span>Profile</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="{{route('user.profile',Auth::user()->id)}}"> <span class="me-2 text-900" data-feather="user"></span>Profile</a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>

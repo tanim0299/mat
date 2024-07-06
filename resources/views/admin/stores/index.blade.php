@@ -97,6 +97,7 @@
                             <th>@lang('store.email')</th>
                             <th>@lang('common.status')</th>
                             <th>@lang('store.logo')</th>
+                            <th>@lang('common.manage')</th>
                             <th>@lang('common.action')</th>
                         </tr>
                     </thead>
@@ -124,6 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
             {data : 'email', name: 'email'},
             {data : 'status', name: 'status'},
             { data: 'logos', name: 'logos'},
+            { data: 'manage', name: 'manage'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });

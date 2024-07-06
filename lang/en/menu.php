@@ -26,4 +26,5 @@ return array(
     'delete_message' => 'Menu Deleted Successfully',
     'status_message' => 'Menu Status Changed Successfully',
     'details' => 'Details',
+    'order_by' => 'Order By',
 );

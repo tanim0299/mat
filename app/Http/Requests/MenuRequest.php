@@ -27,6 +27,7 @@ class MenuRequest extends FormRequest
         $array['name'] = 'required';
         $array['status'] = 'required';
         $array['position'] = 'required';
+        $array['order_by'] = 'required';
         if($request->type == 1)
         {
             $array['label_id'] = 'required';

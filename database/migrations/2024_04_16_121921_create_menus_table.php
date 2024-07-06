@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->integer('status')->comment(' 0 - Inactive & 1 - Active');
             $table->integer('type')->comment('1 - Parent | 2 - Module | 3 - Single');
+            $table->integer('order_by')->nullable();
             $table->bigInteger('create_by')->unsigned();
             $table->foreign('create_by')->references('id')->on('users');
             $table->date('deleted_at')->nullable();

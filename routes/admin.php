@@ -42,6 +42,8 @@ Route::post('/permission_store/{id}',[RoleController::class,'permission_store'])
 Route::get('/user_trash_list',[UserController::class,'trash_list'])->name('user.trash_list');
 Route::get('restore_user/{id}',[UserController::class,'restore'])->name('user.restore');
 Route::get('delete_user/{id}',[UserController::class,'delete'])->name('user.delete');
+Route::get('user_profile/{id}',[UserController::class,'profile'])->name('user.profile');
+Route::post('user_profile_update/{id}',[UserController::class,'profile_update'])->name('user.profile_update');
 
 //store extra routes;
 Route::get('/store_trash_list',[StoreController::class,'trash_list'])->name('store.trash_list');

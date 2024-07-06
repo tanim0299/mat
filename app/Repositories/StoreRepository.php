@@ -66,6 +66,11 @@ class StoreRepository implements StoreInterface {
                     return '';
                 }
             })
+            ->addColumn('manage',function($row){
+                return '<a class="btn btn-outline-success btn-sm" href="'.url('/stores/'.$row->id).'" target="_blank">
+                    <i class="fa fa-wrench"></i> '.__('store.manage').'
+                </a>';
+            })
             ->addColumn('logos',function($row){
                 if($row->logo)
                 {
@@ -117,7 +122,7 @@ class StoreRepository implements StoreInterface {
               </div>';
                 return $output;
             })
-            ->rawColumns(['action','sl','status','name','logos'])
+            ->rawColumns(['action','sl','status','name','logos','manage'])
             ->make(true);
 
         }

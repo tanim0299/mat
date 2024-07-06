@@ -70,6 +70,7 @@
                 <hr>
                 @if(isset($data['menu']))
                 @foreach ($data['menu'] as $m)
+                @if($m->position == 'cms')
                 @php
                     $permissions = DB::table('permissions')->where('parent',$m->system_name)->get();
                 @endphp
@@ -78,7 +79,7 @@
                     <div class="row">
                         @if(isset($permissions))
                         @foreach ($permissions as $p)
-
+                        @if($m->position == 'cms')
                         @php
                             $check = DB::table('role_has_permissions')->where('role_id',$data['role']->id)->where('permission_id',$p->id)->count();
                         @endphp
@@ -87,10 +88,12 @@
                             <input value="{{ $p->name }}" class="permission" type="checkbox" name="permission[]" id="permission{{ $p->id }}" @if($check == 1) checked @endif>
                             <label for="permission{{ $p->id }}">{{ $p->name }}</label>
                         </div>
+                        @endif
                         @endforeach
                         @endif
                     </div>
                 </div>
+                @endif
                 @endforeach
                 @endif
 

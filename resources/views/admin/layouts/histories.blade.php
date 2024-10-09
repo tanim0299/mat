@@ -108,7 +108,7 @@
                     @foreach ($data['histories'] as $h)
                     @if($h->type == 'restore')
                     <tr>
-                        <td>
+                        <td>    
                             {{ App\Traits\Date::getDateWithMonth('-',$h->date) }}, {{ date('h:i:s a', strtotime($h->time)) }}
                         </td>
                         <td>

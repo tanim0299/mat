@@ -5,7 +5,7 @@
    @component('components.store_breadcrumb')
 
     @slot('page_title')
-    @lang('product_item.add')
+    @lang('product_item.edit_title')
     @endslot
 
 
@@ -35,15 +35,16 @@
 
    <div class="card">
     <div class="card-header">
-        <b>@lang('product_item.add')</b>
+        <b>@lang('product_item.edit_title')</b>
     </div>
     <div class="card-body">
-        <form method="post" action="{{ route('product_item.store') }}">
+        <form method="post" action="{{ route('product_item.update',$data['data']->id) }}">
             @csrf
+            @method('PUT')
             <div class="row">
                 <div class="col-lg-4 col-md-6 col-6">
                     <label for="item_name">@lang('product_item.item_name')</label><span class="text-danger">*</span>
-                    <input type="text" class="form-control form-control-sm @error('item_name') is-invalid @enderror" id="item_name" name="item_name" value="{{ old('item_name') }}">
+                    <input type="text" class="form-control form-control-sm @error('item_name') is-invalid @enderror" id="item_name" name="item_name" value="{{ $data['data']->item_name }}">
                     @error('item_name')
                         <div class="alert alert-danger">
                             {{ $message }}
@@ -52,7 +53,7 @@
                 </div>
                 <div class="col-lg-4 col-md-6 col-6">
                     <label for="item_name_bn">@lang('product_item.item_name_bn')</label>
-                    <input type="text" class="form-control form-control-sm" id="item_name_bn" name="item_name_bn" value="{{ old('item_name_bn') }}">
+                    <input type="text" class="form-control form-control-sm" id="item_name_bn" name="item_name_bn" value="{{ $data['data']->item_name_bn }}">
                 </div>
                 <div class="col-12 text-right">
                     <button class="btn btn-info btn-sm"><i class="fa fa-save"></i> @lang('common.submit')</button>

@@ -18,7 +18,83 @@
     <link href="{{ asset('StoreAssets') }}/assets/vendors/jvectormap/jquery-jvectormap-2.0.3.css" rel="stylesheet" />
     <!-- THEME STYLES-->
     <link href="{{ asset('StoreAssets') }}/assets/css/main.min.css" rel="stylesheet" />
+    <link href="{{ asset('StoreAssets') }}/assets/vendors/DataTables/datatables.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <!-- PAGE LEVEL STYLES-->
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+        }
+        .checkbox-wrapper-51 input[type="checkbox"] {
+  visibility: hidden;
+  display: none;
+}
+
+.checkbox-wrapper-51 .toggle {
+  position: relative;
+  display: block;
+  width: 42px;
+  height: 24px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transform: translate3d(0, 0, 0);
+}
+
+.checkbox-wrapper-51 .toggle:before {
+  content: "";
+  position: relative;
+  top: 1px;
+  left: 1px;
+  width: 40px;
+  height: 22px;
+  display: block;
+  background: #c8ccd4;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.checkbox-wrapper-51 .toggle span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  display: block;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(154,153,153,0.75);
+  transition: all 0.2s ease;
+}
+
+.checkbox-wrapper-51 .toggle span svg {
+  margin: 7px;
+  fill: none;
+}
+
+.checkbox-wrapper-51 .toggle span svg path {
+  stroke: #c8ccd4;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 0;
+  transition: all 0.5s linear;
+}
+
+.checkbox-wrapper-51 input[type="checkbox"]:checked + .toggle:before {
+  background: #1175c7;
+}
+
+.checkbox-wrapper-51 input[type="checkbox"]:checked + .toggle span {
+  transform: translateX(18px);
+}
+
+.checkbox-wrapper-51 input[type="checkbox"]:checked + .toggle span path {
+  stroke: #000000;
+  stroke-dasharray: 25;
+  stroke-dashoffset: 25;
+}
+    </style>
 </head>
 
 <body class="fixed-navbar">
@@ -349,6 +425,21 @@
     <script src="{{ asset('StoreAssets') }}/assets/js/app.min.js" type="text/javascript"></script>
     <!-- PAGE LEVEL SCRIPTS-->
     <script src="{{ asset('StoreAssets') }}/assets/js/scripts/dashboard_1_demo.js" type="text/javascript"></script>
+    <script src="{{ asset('StoreAssets') }}/assets/vendors/DataTables/datatables.min.js" type="text/javascript"></script>
+    @stack('footer_scripts')
+    <script>
+        function Sure()
+        {
+            if(confirm("Are Your Sure To Delete?"))
+        {
+            return ture;
+        }
+        else
+        {
+            return false;
+        }
+        }
+   </script>
 </body>
 
 </html>

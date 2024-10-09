@@ -43,5 +43,6 @@ return array(
     'delete' => 'Delete',
     'select_all' => 'Select All',
     'manage' => 'Manage',
+    'sl' => 'Serial No',
 
 );

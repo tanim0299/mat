@@ -2,6 +2,6 @@
 namespace App\Interfaces;
 use App\Interfaces\BaseInterface;
 
-interface CategoryInterface extends BaseInterface{
+interface BrandInterface extends BaseInterface{
     public function status($id);
 }

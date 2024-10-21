@@ -4,23 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Interfaces\CategoryInterface;
-use App\Http\Requests\CategoryRequest;
+use App\Interfaces\BrandInterface;
+use App\Http\Requests\BrandRequest;
 
-class CategoryController extends Controller
+class BrandController extends Controller
 {
     protected $interface;
-    public function __construct(CategoryInterface $interface)
+    public function __construct(BrandInterface $interface)
     {
         $this->interface = $interface;
-        $this->middleware(['permission:Category view'])->only(['index']);
-        $this->middleware(['permission:Category create'])->only(['create']);
-        $this->middleware(['permission:Category edit'])->only(['edit']);
-        $this->middleware(['permission:Category destroy'])->only(['destroy']);
-        $this->middleware(['permission:Category status'])->only(['status']);
-        $this->middleware(['permission:Category restore'])->only(['restore']);
-        $this->middleware(['permission:Category delete'])->only(['delete']);
-        $this->middleware(['permission:Category show'])->only(['show']);
+        $this->middleware(['permission:Brand view'])->only(['index']);
+        $this->middleware(['permission:Brand create'])->only(['create']);
+        $this->middleware(['permission:Brand edit'])->only(['edit']);
+        $this->middleware(['permission:Brand destroy'])->only(['destroy']);
+        $this->middleware(['permission:Brand status'])->only(['status']);
+        $this->middleware(['permission:Brand restore'])->only(['restore']);
+        $this->middleware(['permission:Brand delete'])->only(['delete']);
+        $this->middleware(['permission:Brand show'])->only(['show']);
     }
     /**
      * Display a listing of the resource.
@@ -32,7 +32,6 @@ class CategoryController extends Controller
         {
             $datatable = true;
         }
-
         return $this->interface->index($datatable);
     }
 
@@ -47,9 +46,8 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CategoryRequest $request)
+    public function store(BrandRequest $request)
     {
-        // dd($request->all());
         return $this->interface->store($request);
     }
 
@@ -72,7 +70,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategoryRequest $request, string $id)
+    public function update(BrandRequest $request, string $id)
     {
         return $this->interface->update($request,$id);
     }
@@ -97,6 +95,7 @@ class CategoryController extends Controller
         {
             $datatable = true;
         }
+
         return $this->interface->trash_list($datatable);
     }
 

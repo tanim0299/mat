@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Auth;
 
-class Category extends Model
+class Brand extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -19,11 +19,5 @@ class Category extends Model
         static::creating(function($model){
             $model->create_by = Auth::user()->id;
         });
-    }
-
-
-    public function item()
-    {
-        return $this->belongsTo('App\Models\ProductItem','item_id');
     }
 }

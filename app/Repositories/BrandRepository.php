@@ -1,46 +1,42 @@
 <?php
 namespace App\Repositories;
-use App\Interfaces\ProductItemInterface;
+use App\Interfaces\BrandInterface;
+use App\Models\Brand;
 use App\Traits\ViewDirective;
-use Session;
 use Auth;
-use App\Models\ProductItem;
+use Session;
 use App\Models\ActivityLog;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\History;
 
-class ProductItemRepository implements ProductItemInterface{
+class BrandRepository implements BrandInterface{
     protected $path,$sl;
-    use ViewDirective;
-
     public function __construct()
     {
-        $this->path = 'stores.product_item';
-        $this->sl = 0;
+        $this->path = 'stores.brand';
     }
-
     public function index($datatable)
     {
         if($datatable == 1)
         {
-            $data = ProductItem::where('store_id',Session::get('store_id'))->get();
+            $data = Brand::all();
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('sl',function($row){
                 return $this->sl = $this->sl +1;
             })
-            ->addColumn('item_name',function($row){
+            ->addColumn('brand_name',function($row){
                 if(config('app.locale') == 'en')
                 {
-                    return $row->item_name ?: $row->item_name_bn;
+                    return $row->brand_name ?: $row->brand_name_bn;
                 }
                 else
                 {
-                    return $row->item_name_bn ?: $row->item_name;
+                    return $row->brand_name_bn ?: $row->brand_name;
                 }
             })
             ->addColumn('status',function($row){
-                if(Auth::user()->can('Item Information status'))
+                if(Auth::user()->can('Brand status'))
                 {
                     if($row->status == 1)
                     {
@@ -51,7 +47,7 @@ class ProductItemRepository implements ProductItemInterface{
                         $checked = 'false';
                     }
                     return '<div class="checkbox-wrapper-51">
-                    <input onchange="return changeProductItemStatus('.$row->id.')" id="cbx-'.$row->id.'" type="checkbox" '.$checked.'>
+                    <input onchange="return changeBrandStatus('.$row->id.')" id="cbx-'.$row->id.'" type="checkbox" '.$checked.'>
                     <label class="toggle" for="cbx-'.$row->id.'">
                       <span>
                         <svg viewBox="0 0 10 10" height="10px" width="10px">
@@ -67,27 +63,27 @@ class ProductItemRepository implements ProductItemInterface{
                 }
             })
             ->addColumn('action', function($row){
-                if(Auth::user()->can('Item Information show'))
+                if(Auth::user()->can('Brand show'))
                 {
-                    $show_btn = '<a style="float:left;margin-right:5px;" href="'.route('product_item.show',$row->id).'" class="btn btn-sm btn-success"><i class="fa fa-eye"></i></a>';
+                    $show_btn = '<a style="float:left;margin-right:5px;" href="'.route('brand.show',$row->id).'" class="btn btn-sm btn-success"><i class="fa fa-eye"></i></a>';
                 }
                 else
                 {
                     $show_btn = '';
                 }
 
-                if(Auth::user()->can('Item Information edit'))
+                if(Auth::user()->can('Brand edit'))
                 {
-                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('product_item.edit',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>';
+                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('brand.edit',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>';
                 }
                 else
                 {
                     $edit_btn ='';
                 }
 
-                if(Auth::user()->can('Item Information destroy'))
+                if(Auth::user()->can('Brand destroy'))
                 {
-                    $delete_btn = '<form id="" method="post" action="'.route('product_item.destroy',$row->id).'">
+                    $delete_btn = '<form id="" method="post" action="'.route('brand.destroy',$row->id).'">
                     '.csrf_field().'
                     '.method_field('DELETE').'
                     <button onclick="return Sure()" type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
@@ -104,7 +100,7 @@ class ProductItemRepository implements ProductItemInterface{
 
                 return $return_btn;
             })
-            ->rawColumns(['action','item_name','sl','status'])
+            ->rawColumns(['action','brand_name','sl','status'])
             ->make(true);
 
         }
@@ -119,8 +115,8 @@ class ProductItemRepository implements ProductItemInterface{
     public function store($request)
     {
         $data = array(
-            'item_name' => $request->item_name,
-            'item_name_bn' => $request->item_name_bn,
+            'brand_name' => $request->brand_name,
+            'brand_name_bn' => $request->brand_name_bn,
             'status' => 1,
             'store_id' => Session::get('store_id'),
         );
@@ -128,16 +124,16 @@ class ProductItemRepository implements ProductItemInterface{
         // return $data;
 
         try {
-            ProductItem::create($data);
+            Brand::create($data);
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'create',
-                'description' => 'Create Product Item which name is '.$request->item_name,
-                'description_bn' => 'একটি প্রোডাক্ট আইটেম তৈরি করেছেন যার নাম '.$request->item_name,
+                'description' => 'Create Brand which name is '.$request->brand_name,
+                'description_bn' => 'একটি ব্র্যান্ড তৈরি করেছেন যার নাম '.$request->brand_name,
             ]);
-            toastr()->success(__('product_item.create_message'), __('common.success'), ['timeOut' => 5000]);
+            toastr()->success(__('brand.create_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error',$th->getMessage());
@@ -146,8 +142,8 @@ class ProductItemRepository implements ProductItemInterface{
 
     public function show($id)
     {
-        $data['data'] = ProductItem::find($id);
-        $data['histories']  = History::where('tag','product_item')->where('fk_id',$id)->get();
+        $data['data'] = Brand::find($id);
+        $data['histories']  = History::where('tag','brand')->where('fk_id',$id)->get();
         return ViewDirective::view($this->path,'show',$data);
     }
 
@@ -157,35 +153,36 @@ class ProductItemRepository implements ProductItemInterface{
 
     public function edit($id)
     {
-        $param['data'] = ProductItem::find($id);
-        return ViewDirective::view($this->path,'edit',$param);
+        $data['data'] = Brand::find($id);
+        return ViewDirective::view($this->path,'edit',$data);
     }
 
     public function update($request, $id)
     {
+        $data = array(
+            'brand_name' => $request->brand_name,
+            'brand_name_bn' => $request->brand_name_bn,
+        );
+
         try {
-            $data = array(
-                'item_name' => $request->item_name,
-                'item_name_bn' => $request->item_name_bn,
-            );
-            ProductItem::find($id)->update($data);
+            Brand::find($id)->update($data);
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'update',
-                'description' => 'Update Product Item which name is '.$request->item_name,
-                'description_bn' => 'একটি প্রোডাক্ট আইটেম সম্পাদন করেছেন যার নাম '.$request->item_name,
+                'description' => 'Update Brand which name is '.$request->brand_name,
+                'description_bn' => 'একটি ব্র্যান্ড সম্পাদন করেছেন যার নাম '.$request->brand_name,
             ]);
             History::create([
-                'tag' => 'product_item',
+                'tag' => 'brand',
                 'fk_id' => $id,
                 'type' => 'update',
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
             ]);
-            toastr()->success(__('product_item.update_message'), __('common.success'), ['timeOut' => 5000]);
+            toastr()->success(__('brand.update_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error',$th->getMessage());
@@ -195,25 +192,25 @@ class ProductItemRepository implements ProductItemInterface{
     public function destroy($id)
     {
         try {
-            ProductItem::find($id)->delete();
-            $data = ProductItem::withTrashed()->where('id',$id)->first();
+            Brand::find($id)->delete();
+            $data = Brand::withTrashed()->where('id',$id)->first();
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'destroy',
-                'description' => 'Delete Product Item which name is '.$data->item_name,
-                'description_bn' => 'একটি প্রোডাক্ট আইটেম ডিলেট করেছেন যার নাম '.$data->item_name,
+                'description' => 'Delete Brand which name is '.$data->brand_name,
+                'description_bn' => 'একটি ব্র্যান্ড ডিলেট করেছেন যার নাম '.$data->brand_name,
             ]);
             History::create([
-                'tag' => 'product_item',
+                'tag' => 'brand',
                 'fk_id' => $id,
                 'type' => 'destroy',
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
             ]);
-            toastr()->success(__('product_item.delete_message'), __('common.success'), ['timeOut' => 5000]);
+            toastr()->success(__('brand.delete_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error',$th->getMessage());
@@ -224,24 +221,24 @@ class ProductItemRepository implements ProductItemInterface{
     {
         if($datatable == 1)
         {
-            $data = ProductItem::onlyTrashed()->where('store_id',Session::get('store_id'))->get();
+            $data = Brand::onlyTrashed()->get();
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('sl',function($row){
                 return $this->sl = $this->sl +1;
             })
-            ->addColumn('item_name',function($row){
+            ->addColumn('brand_name',function($row){
                 if(config('app.locale') == 'en')
                 {
-                    return $row->item_name ?: $row->item_name_bn;
+                    return $row->brand_name ?: $row->brand_name_bn;
                 }
                 else
                 {
-                    return $row->item_name_bn ?: $row->item_name;
+                    return $row->brand_name_bn ?: $row->brand_name;
                 }
             })
             ->addColumn('status',function($row){
-                if(Auth::user()->can('Item Information status'))
+                if(Auth::user()->can('Brand status'))
                 {
                     if($row->status == 1)
                     {
@@ -252,7 +249,7 @@ class ProductItemRepository implements ProductItemInterface{
                         $checked = 'false';
                     }
                     return '<div class="checkbox-wrapper-51">
-                    <input onchange="return changeProductItemStatus('.$row->id.')" id="cbx-'.$row->id.'" type="checkbox" '.$checked.'>
+                    <input onchange="return changeBrandStatus('.$row->id.')" id="cbx-'.$row->id.'" type="checkbox" '.$checked.'>
                     <label class="toggle" for="cbx-'.$row->id.'">
                       <span>
                         <svg viewBox="0 0 10 10" height="10px" width="10px">
@@ -268,19 +265,18 @@ class ProductItemRepository implements ProductItemInterface{
                 }
             })
             ->addColumn('action', function($row){
-
-                if(Auth::user()->can('Item Information restore'))
+                if(Auth::user()->can('Brand restore'))
                 {
-                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('product_item.restore',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-arrow-left"></i></a>';
+                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('brand.restore',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-arrow-left"></i></a>';
                 }
                 else
                 {
                     $edit_btn ='';
                 }
 
-                if(Auth::user()->can('Item Information delete'))
+                if(Auth::user()->can('Brand delete'))
                 {
-                    $delete_btn = '<a onclick="return Sure();" style="float:left;margin-right:5px;" href="'.route('product_item.delete',$row->id).'" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>';
+                    $delete_btn = '<a onclick="return Sure();" style="float:left;margin-right:5px;" href="'.route('brand.delete',$row->id).'" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>';
                 }
                 else
                 {
@@ -293,7 +289,7 @@ class ProductItemRepository implements ProductItemInterface{
 
                 return $return_btn;
             })
-            ->rawColumns(['action','item_name','sl','status'])
+            ->rawColumns(['action','brand_name','sl','status'])
             ->make(true);
 
         }
@@ -303,25 +299,25 @@ class ProductItemRepository implements ProductItemInterface{
     public function restore($id)
     {
         try {
-            ProductItem::withTrashed()->where('id',$id)->restore();
-            $data = ProductItem::find($id);
+            Brand::withTrashed()->where('id',$id)->restore();
+            $data = Brand::find($id);
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'restore',
-                'description' => 'Restore Product Item which name is '.$data->item_name,
-                'description_bn' => 'একটি প্রোডাক্ট আইটেম পুরুদ্ধার করেছেন যার নাম '.$data->item_name,
+                'description' => 'Restore Brand which name is '.$data->brand_name,
+                'description_bn' => 'একটি ক্যাটাগরি পুরুদ্ধার করেছেন যার নাম '.$data->brand_name,
             ]);
             History::create([
-                'tag' => 'product_item',
+                'tag' => 'brand',
                 'fk_id' => $id,
                 'type' => 'restore',
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
             ]);
-            toastr()->success(__('product_item.restore_message'), __('common.success'), ['timeOut' => 5000]);
+            toastr()->success(__('brand.restore_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error',$th->getMessage());
@@ -331,20 +327,20 @@ class ProductItemRepository implements ProductItemInterface{
     public function delete($id)
     {
         try{
-            $data = ProductItem::withTrashed()->where('id',$id)->first();
+            $data = Brand::withTrashed()->where('id',$id)->first();
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'delete',
-                'description' => 'Permenantly Delete Product Item which name is '.$data->item_name,
-                'description_bn' => 'একটি প্রোডাক্ট আইটেম সম্পূর্ণ করেছেন যার নাম '.$data->item_name,
+                'description' => 'Permenantly Delete Brand which name is '.$data->brand_name,
+                'description_bn' => 'একটি ব্র্যান্ড সম্পূর্ণ করেছেন যার নাম '.$data->brand_name,
             ]);
 
-            History::where('tag','product_item')->where('fk_id',$id)->delete();
+            History::where('tag','brand')->where('fk_id',$id)->delete();
 
-            ProductItem::withTrashed()->where('id',$id)->forceDelete();
-            toastr()->success(__('product_item.delete_message'), __('common.success'), ['timeOut' => 5000]);
+            Brand::withTrashed()->where('id',$id)->forceDelete();
+            toastr()->success(__('brand.delete_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         }
         catch(\Throwable $th){
@@ -358,7 +354,7 @@ class ProductItemRepository implements ProductItemInterface{
 
     public function status($id)
     {
-        $check = ProductItem::withTrashed()->where('id',$id)->first();
+        $check = Brand::withTrashed()->where('id',$id)->first();
 
         if($check->status == 0)
         {
@@ -378,11 +374,11 @@ class ProductItemRepository implements ProductItemInterface{
             'time' => date('H:i:s'),
             'user_id' => Auth::user()->id,
             'slug' => 'status',
-            'description' => 'Change Status of Product Item which name is '.$check->item_name,
-            'description_bn' => 'একটি প্রোডাক্ট আইটেম এর স্ট্যাটাস পরিবর্তন করেছেন যার নাম '.$check->item_name,
+            'description' => 'Change Status of Brand which name is '.$check->brand_name,
+            'description_bn' => 'একটি ব্র্যান্ড এর স্ট্যাটাস পরিবর্তন করেছেন যার নাম '.$check->brand_name,
         ]);
         History::create([
-            'tag' => 'product_item',
+            'tag' => 'brand',
             'fk_id' => $id,
             'type' => 'status',
             'date' => date('Y-m-d'),

@@ -5,39 +5,19 @@
    @component('components.store_breadcrumb')
 
     @slot('page_title')
-    @lang('product_item.index_title')
+    @lang('category.trash_title')
     @endslot
 
 
-    @if(Auth::user()->can('Item Information create'))
-    <!-- button one -->
-    @slot('button_one_name')
-    @lang('common.create')
-    @endslot
 
-    @slot('button_one_class')
-    btn btn-outline-dark btn-sm
-    @endslot
-
-    @slot('button_one_icon')
-    fa fa-plus
-    @endslot
-
-    @slot('button_one_route')
-    {{route('product_item.create')}}
-    @endslot
-
-    @endif
-
-
-    @if(Auth::user()->can('Item Information trash'))
+    @if(Auth::user()->can('Category show'))
     <!-- button one -->
     @slot('button_two_name')
-    @lang('common.trash_list')
+    @lang('common.view')
     @endslot
 
     @slot('button_two_class')
-    btn btn-danger btn-sm
+    btn btn-info btn-sm
     @endslot
 
     @slot('button_two_icon')
@@ -45,7 +25,7 @@
     @endslot
 
     @slot('button_two_route')
-    {{route('product_item.trash')}}
+    {{route('category.index')}}
     @endslot
 
     @endif
@@ -56,14 +36,15 @@
 
    <div class="card">
     <div class="card-header">
-        <b>@lang('product_item.index_title')</b>
+        <b>@lang('category.index_title')</b>
     </div>
     <div class="card-body">
         <table class="table" id="example-table">
             <thead>
                 <tr>
                     <th>@lang('common.sl')</th>
-                    <th>@lang('product_item.item_name')</th>
+                    <th>@lang('category.item_name')</th>
+                    <th>@lang('category.category_name')</th>
                     <th>@lang('common.status')</th>
                     <th>@lang('common.action')</th>
                 </tr>
@@ -87,10 +68,11 @@
                 // pageLength: 10,
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('product_item.index') }}",
+                ajax: "{{ route('category.trash') }}",
                 columns: [
                     {data: 'sl', name: 'sl'},
                     {data : 'item_name', name: 'item_name'},
+                    {data : 'category_name', name: 'category_name'},
                     {data : 'status', name: 'status'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
@@ -99,7 +81,7 @@
     </script>
 
 <script>
-    function changeProductItemStatus(id)
+    function changeCategoryStatus(id)
     {
         // alert(id);
         $.ajax({
@@ -107,7 +89,7 @@
                 'X-CSRF-TOKEN' : '{{ csrf_token() }}'
             },
 
-            url : '{{ route('product_item.status') }}',
+            url : '{{ route('category.status') }}',
 
             type : 'POST',
 

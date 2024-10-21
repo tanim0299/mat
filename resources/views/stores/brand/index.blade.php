@@ -5,11 +5,11 @@
    @component('components.store_breadcrumb')
 
     @slot('page_title')
-    @lang('product_item.index_title')
+    @lang('brand.index_title')
     @endslot
 
 
-    @if(Auth::user()->can('Item Information create'))
+    @if(Auth::user()->can('Brand create'))
     <!-- button one -->
     @slot('button_one_name')
     @lang('common.create')
@@ -24,13 +24,13 @@
     @endslot
 
     @slot('button_one_route')
-    {{route('product_item.create')}}
+    {{route('brand.create')}}
     @endslot
 
     @endif
 
 
-    @if(Auth::user()->can('Item Information trash'))
+    @if(Auth::user()->can('Brand trash'))
     <!-- button one -->
     @slot('button_two_name')
     @lang('common.trash_list')
@@ -45,7 +45,7 @@
     @endslot
 
     @slot('button_two_route')
-    {{route('product_item.trash')}}
+    {{route('brand.trash')}}
     @endslot
 
     @endif
@@ -56,14 +56,14 @@
 
    <div class="card">
     <div class="card-header">
-        <b>@lang('product_item.index_title')</b>
+        <b>@lang('brand.index_title')</b>
     </div>
     <div class="card-body">
         <table class="table" id="example-table">
             <thead>
                 <tr>
                     <th>@lang('common.sl')</th>
-                    <th>@lang('product_item.item_name')</th>
+                    <th>@lang('brand.brand_name')</th>
                     <th>@lang('common.status')</th>
                     <th>@lang('common.action')</th>
                 </tr>
@@ -87,10 +87,10 @@
                 // pageLength: 10,
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('product_item.index') }}",
+                ajax: "{{ route('brand.index') }}",
                 columns: [
                     {data: 'sl', name: 'sl'},
-                    {data : 'item_name', name: 'item_name'},
+                    {data : 'brand_name', name: 'brand_name'},
                     {data : 'status', name: 'status'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
@@ -99,7 +99,7 @@
     </script>
 
 <script>
-    function changeProductItemStatus(id)
+    function changeBrandStatus(id)
     {
         // alert(id);
         $.ajax({
@@ -107,7 +107,7 @@
                 'X-CSRF-TOKEN' : '{{ csrf_token() }}'
             },
 
-            url : '{{ route('product_item.status') }}',
+            url : '{{ route('brand.status') }}',
 
             type : 'POST',
 

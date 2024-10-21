@@ -21,4 +21,15 @@ class ProductItem extends Model
         });
     }
 
+    public static function getActive()
+    {
+        $data = ProductItem::where('status',1)->get();
+        return $data;
+    }
+
+    public function category()
+    {
+        return $this->hasMan('App\Models\Category','item_id');
+    }
+
 }

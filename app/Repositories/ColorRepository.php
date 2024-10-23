@@ -1,54 +1,43 @@
 <?php
 namespace App\Repositories;
-use App\Interfaces\CategoryInterface;
+use App\Interfaces\ColorInterface;
 use App\Traits\ViewDirective;
-use App\Models\ProductItem;
-use App\Models\Category;
+use App\Models\Color;
 use App\Models\ActivityLog;
 use App\Models\History;
 use Auth;
 use Session;
 use Yajra\DataTables\Facades\DataTables;
 
-class CategoryRepository implements CategoryInterface {
-    use ViewDirective;
+class ColorRepository implements ColorInterface{
     protected $path,$sl;
+    use ViewDirective;
     public function __construct()
     {
-        $this->path = 'stores.category';
+        $this->path = 'stores.color';
     }
     public function index($datatable)
     {
         if($datatable == 1)
         {
-            $data = Category::where('stoer_id',Session::get('store_id'))->get();
+            $data = Color::where('store_id',Session::get('store_id'))->get();
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('sl',function($row){
                 return $this->sl = $this->sl +1;
             })
-            ->addColumn('item_name',function($row){
+            ->addColumn('color_name',function($row){
                 if(config('app.locale') == 'en')
                 {
-                    return $row->item->item_name ?: $row->item->item_name_bn;
+                    return '<div class="box" style="background-color:'.$row->color_code.'"></div>'.$row->color_name ?: $row->color_name_bn;
                 }
                 else
                 {
-                    return $row->item->item_name_bn ?: $row->item->item_name;
-                }
-            })
-            ->addColumn('category_name',function($row){
-                if(config('app.locale') == 'en')
-                {
-                    return $row->category_name ?: $row->category_name_bn;
-                }
-                else
-                {
-                    return $row->category_name_bn ?: $row->category_name;
+                    return '<div class="box" style="background-color:'.$row->color_code.'"></div>'.$row->color_name_bn ?: $row->color_name;
                 }
             })
             ->addColumn('status',function($row){
-                if(Auth::user()->can('Category status'))
+                if(Auth::user()->can('Color status'))
                 {
                     if($row->status == 1)
                     {
@@ -59,7 +48,7 @@ class CategoryRepository implements CategoryInterface {
                         $checked = 'false';
                     }
                     return '<div class="checkbox-wrapper-51">
-                    <input onchange="return changeCategoryStatus('.$row->id.')" id="cbx-'.$row->id.'" type="checkbox" '.$checked.'>
+                    <input onchange="return changeColorStatus('.$row->id.')" id="cbx-'.$row->id.'" type="checkbox" '.$checked.'>
                     <label class="toggle" for="cbx-'.$row->id.'">
                       <span>
                         <svg viewBox="0 0 10 10" height="10px" width="10px">
@@ -75,27 +64,27 @@ class CategoryRepository implements CategoryInterface {
                 }
             })
             ->addColumn('action', function($row){
-                if(Auth::user()->can('Category show'))
+                if(Auth::user()->can('Color show'))
                 {
-                    $show_btn = '<a style="float:left;margin-right:5px;" href="'.route('category.show',$row->id).'" class="btn btn-sm btn-success"><i class="fa fa-eye"></i></a>';
+                    $show_btn = '<a style="float:left;margin-right:5px;" href="'.route('color.show',$row->id).'" class="btn btn-sm btn-success"><i class="fa fa-eye"></i></a>';
                 }
                 else
                 {
                     $show_btn = '';
                 }
 
-                if(Auth::user()->can('Category edit'))
+                if(Auth::user()->can('Color edit'))
                 {
-                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('category.edit',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>';
+                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('color.edit',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>';
                 }
                 else
                 {
                     $edit_btn ='';
                 }
 
-                if(Auth::user()->can('Category destroy'))
+                if(Auth::user()->can('Color destroy'))
                 {
-                    $delete_btn = '<form id="" method="post" action="'.route('category.destroy',$row->id).'">
+                    $delete_btn = '<form id="" method="post" action="'.route('color.destroy',$row->id).'">
                     '.csrf_field().'
                     '.method_field('DELETE').'
                     <button onclick="return Sure()" type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
@@ -112,52 +101,52 @@ class CategoryRepository implements CategoryInterface {
 
                 return $return_btn;
             })
-            ->rawColumns(['action','item_name','sl','status','category_name'])
+            ->rawColumns(['action','color_name','sl','status'])
             ->make(true);
 
         }
         return ViewDirective::view($this->path,'index');
-
     }
 
     public function create()
     {
-        $params['item'] = ProductItem::getActive();
-
-        return ViewDirective::view($this->path,'create',$params);
+        return ViewDirective::view($this->path,'create');
     }
 
     public function store($request)
     {
         $data = array(
-            'item_id' => $request->item_id,
-            'category_name' => $request->category_name,
-            'category_name_bn' => $request->category_name_bn,
+            'color_name' => $request->color_name,
+            'color_name_bn' => $request->color_name_bn,
+            'color_code' => $request->color_code,
             'status' => 1,
             'store_id' => Session::get('store_id'),
         );
 
+        // return $data;
+
         try {
-            Category::create($data);
+            Color::create($data);
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'create',
-                'description' => 'Create Category which name is '.$request->category_name,
-                'description_bn' => 'একটি ক্যাটেগরি তৈরি করেছেন যার নাম '.$request->category_name_bn,
+                'description' => 'Create Color which name is '.$request->color_name,
+                'description_bn' => 'একটি ব্র্যান্ড তৈরি করেছেন যার নাম '.$request->color_name,
             ]);
-            toastr()->success(__('category.create_message'), __('common.success'), ['timeOut' => 5000]);
+            toastr()->success(__('color.create_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error',$th->getMessage());
         }
+
     }
 
     public function show($id)
     {
-        $data['data'] = Category::find($id);
-        $data['histories']  = History::where('tag','category')->where('fk_id',$id)->get();
+        $data['data'] = Color::find($id);
+        $data['histories'] = History::where('tag','color')->get();
         return ViewDirective::view($this->path,'show',$data);
     }
 
@@ -167,38 +156,37 @@ class CategoryRepository implements CategoryInterface {
 
     public function edit($id)
     {
-        $data['data'] = Category::find($id);
-        $data['item'] = ProductItem::getActive();
+        $data['data'] = Color::find($id);
         return ViewDirective::view($this->path,'edit',$data);
     }
 
     public function update($request, $id)
     {
         $data = array(
-            'item_id' => $request->item_id,
-            'category_name' => $request->category_name,
-            'category_name_bn' => $request->category_name_bn,
+            'color_name' => $request->color_name,
+            'color_name_bn' => $request->color_name_bn,
+            'color_code' => $request->color_code,
         );
 
         try {
-            Category::find($id)->update($data);
+            Color::find($id)->update($data);
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'update',
-                'description' => 'Update Category which name is '.$request->category_name,
-                'description_bn' => 'একটি ক্যাটেগরি সম্পাদন করেছেন যার নাম '.$request->category_name,
+                'description' => 'Update Color which name is '.$request->color_name,
+                'description_bn' => 'একটি কালার সম্পাদন করেছেন যার নাম '.$request->color_name,
             ]);
             History::create([
-                'tag' => 'category',
+                'tag' => 'color',
                 'fk_id' => $id,
                 'type' => 'update',
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
             ]);
-            toastr()->success(__('category.update_message'), __('common.success'), ['timeOut' => 5000]);
+            toastr()->success(__('color.update_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error',$th->getMessage());
@@ -208,25 +196,25 @@ class CategoryRepository implements CategoryInterface {
     public function destroy($id)
     {
         try {
-            Category::find($id)->delete();
-            $data = Category::withTrashed()->where('id',$id)->first();
+            Color::find($id)->delete();
+            $data = Color::withTrashed()->where('id',$id)->first();
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'destroy',
-                'description' => 'Delete Category which name is '.$data->category_name,
-                'description_bn' => 'একটি ক্যাটাগরি ডিলেট করেছেন যার নাম '.$data->category_name,
+                'description' => 'Delete Color which name is '.$data->color_name,
+                'description_bn' => 'একটি কালার ডিলেট করেছেন যার নাম '.$data->color_name,
             ]);
             History::create([
-                'tag' => 'category',
+                'tag' => 'color',
                 'fk_id' => $id,
                 'type' => 'destroy',
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
             ]);
-            toastr()->success(__('category.delete_message'), __('common.success'), ['timeOut' => 5000]);
+            toastr()->success(__('color.delete_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error',$th->getMessage());
@@ -237,34 +225,24 @@ class CategoryRepository implements CategoryInterface {
     {
         if($datatable == 1)
         {
-            $data = Category::onlyTrashed()->where('store_id',Session::get('store_id'))->get();
+            $data = Color::onlyTrashed()->where('store_id',Session::get('store_id'))->get();
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('sl',function($row){
                 return $this->sl = $this->sl +1;
             })
-            ->addColumn('item_name',function($row){
+            ->addColumn('color_name',function($row){
                 if(config('app.locale') == 'en')
                 {
-                    return $row->item->item_name ?: $row->item->item_name_bn;
+                    return '<div class="box" style="background-color:'.$row->color_code.'"></div>'.$row->color_name ?: $row->color_name_bn;
                 }
                 else
                 {
-                    return $row->item->item_name_bn ?: $row->item->item_name;
-                }
-            })
-            ->addColumn('category_name',function($row){
-                if(config('app.locale') == 'en')
-                {
-                    return $row->category_name ?: $row->category_name_bn;
-                }
-                else
-                {
-                    return $row->category_name_bn ?: $row->category_name;
+                    return '<div class="box" style="background-color:'.$row->color_code.'"></div>'.$row->color_name_bn ?: $row->color_name;
                 }
             })
             ->addColumn('status',function($row){
-                if(Auth::user()->can('Category status'))
+                if(Auth::user()->can('Color status'))
                 {
                     if($row->status == 1)
                     {
@@ -275,7 +253,7 @@ class CategoryRepository implements CategoryInterface {
                         $checked = 'false';
                     }
                     return '<div class="checkbox-wrapper-51">
-                    <input onchange="return changeCategoryStatus('.$row->id.')" id="cbx-'.$row->id.'" type="checkbox" '.$checked.'>
+                    <input onchange="return changeColorStatus('.$row->id.')" id="cbx-'.$row->id.'" type="checkbox" '.$checked.'>
                     <label class="toggle" for="cbx-'.$row->id.'">
                       <span>
                         <svg viewBox="0 0 10 10" height="10px" width="10px">
@@ -291,18 +269,18 @@ class CategoryRepository implements CategoryInterface {
                 }
             })
             ->addColumn('action', function($row){
-                if(Auth::user()->can('Category restore'))
+                if(Auth::user()->can('Color restore'))
                 {
-                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('category.restore',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-arrow-left"></i></a>';
+                    $edit_btn = '<a style="float:left;margin-right:5px;" href="'.route('color.restore',$row->id).'" class="btn btn-sm btn-info"><i class="fa fa-arrow-left"></i></a>';
                 }
                 else
                 {
                     $edit_btn ='';
                 }
 
-                if(Auth::user()->can('Category delete'))
+                if(Auth::user()->can('Color delete'))
                 {
-                    $delete_btn = '<a onclick="return Sure();" style="float:left;margin-right:5px;" href="'.route('category.delete',$row->id).'" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>';
+                    $delete_btn = '<a onclick="return Sure();" style="float:left;margin-right:5px;" href="'.route('color.delete',$row->id).'" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>';
                 }
                 else
                 {
@@ -315,7 +293,7 @@ class CategoryRepository implements CategoryInterface {
 
                 return $return_btn;
             })
-            ->rawColumns(['action','item_name','sl','status','category_name'])
+            ->rawColumns(['action','color_name','sl','status'])
             ->make(true);
 
         }
@@ -325,47 +303,48 @@ class CategoryRepository implements CategoryInterface {
     public function restore($id)
     {
         try {
-            Category::withTrashed()->where('id',$id)->restore();
-            $data = Category::find($id);
+            Color::withTrashed()->where('id',$id)->restore();
+            $data = Color::find($id);
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'restore',
-                'description' => 'Restore Category which name is '.$data->category_name,
-                'description_bn' => 'একটি ক্যাটাগরি পুরুদ্ধার করেছেন যার নাম '.$data->category_name,
+                'description' => 'Restore Color which name is '.$data->color_name,
+                'description_bn' => 'একটি কালার পুরুদ্ধার করেছেন যার নাম '.$data->color_name,
             ]);
             History::create([
-                'tag' => 'category',
+                'tag' => 'color',
                 'fk_id' => $id,
                 'type' => 'restore',
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
             ]);
-            toastr()->success(__('category.restore_message'), __('common.success'), ['timeOut' => 5000]);
+            toastr()->success(__('color.restore_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         } catch (\Throwable $th) {
             return redirect()->back()->with('error',$th->getMessage());
         }
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         try{
-            $data = Category::withTrashed()->where('id',$id)->first();
+            $data = Color::withTrashed()->where('id',$id)->first();
             ActivityLog::create([
                 'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'user_id' => Auth::user()->id,
                 'slug' => 'delete',
-                'description' => 'Permenantly Delete Category which name is '.$data->category_name,
-                'description_bn' => 'একটি ক্যাটাগরি সম্পূর্ণ করেছেন যার নাম '.$data->category_name,
+                'description' => 'Permenantly Delete Color which name is '.$data->color_name,
+                'description_bn' => 'একটি কালার সম্পূর্ণ করেছেন যার নাম '.$data->color_name,
             ]);
 
-            History::where('tag','category')->where('fk_id',$id)->delete();
+            History::where('tag','color')->where('fk_id',$id)->delete();
 
-            Category::withTrashed()->where('id',$id)->forceDelete();
-            toastr()->success(__('category.delete_message'), __('common.success'), ['timeOut' => 5000]);
+            Color::withTrashed()->where('id',$id)->forceDelete();
+            toastr()->success(__('color.delete_message'), __('common.success'), ['timeOut' => 5000]);
             return redirect()->back();
         }
         catch(\Throwable $th){
@@ -379,7 +358,7 @@ class CategoryRepository implements CategoryInterface {
 
     public function status($id)
     {
-        $check = Category::withTrashed()->where('id',$id)->first();
+        $check = Color::withTrashed()->where('id',$id)->first();
 
         if($check->status == 0)
         {
@@ -399,11 +378,11 @@ class CategoryRepository implements CategoryInterface {
             'time' => date('H:i:s'),
             'user_id' => Auth::user()->id,
             'slug' => 'status',
-            'description' => 'Change Status of Category which name is '.$check->category_name,
-            'description_bn' => 'একটি প্রোডাক্ট আইটেম এর স্ট্যাটাস পরিবর্তন করেছেন যার নাম '.$check->category_name_bn,
+            'description' => 'Change Status of Color which name is '.$check->color_name,
+            'description_bn' => 'একটি ব্র্যান্ড এর স্ট্যাটাস পরিবর্তন করেছেন যার নাম '.$check->color_name,
         ]);
         History::create([
-            'tag' => 'category',
+            'tag' => 'color',
             'fk_id' => $id,
             'type' => 'status',
             'date' => date('Y-m-d'),
@@ -413,5 +392,4 @@ class CategoryRepository implements CategoryInterface {
 
         return 1;
     }
-
 }

@@ -13,9 +13,9 @@
         <div class="card-body">
             <h4>
                 @if(config('app.locale') == 'en')
-                {{ $data['data']->brand_name ?: $data['data']->brand_name_bn }}
+                {{ $data['data']->color_name ?: $data['data']->color_name_bn }}
                 @else
-                {{ $data['data']->brand_name_bn ?: $data['data']->brand_name }}
+                {{ $data['data']->color_name_bn ?: $data['data']->color_name }}
                 @endif
             </h4>
             @php

@@ -19,7 +19,7 @@ class BrandRepository implements BrandInterface{
     {
         if($datatable == 1)
         {
-            $data = Brand::all();
+            $data = Brand::where('store_id',Session::get('store_id'))->get();
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('sl',function($row){
@@ -221,7 +221,7 @@ class BrandRepository implements BrandInterface{
     {
         if($datatable == 1)
         {
-            $data = Brand::onlyTrashed()->get();
+            $data = Brand::onlyTrashed()->where('store_id',Session::get('store_id'))->get();
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('sl',function($row){

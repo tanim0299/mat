@@ -28,4 +28,12 @@ return array(
     'phone_unique' => 'This Phone Number Is Used',
     'passwrod_required' => 'Please Give Password',
     'password_min' => 'Password Must Be At Least 6 Character',
+    'profile' => 'Profile',
+    'personal_info' => 'Personal Info',
+    'change_profile' => 'Change Profile',
+    'personal_information' => 'Personal Information',
+    'file_upload' =>'File Upload',
+    'webcam' => 'From Camera',
+    'click' =>'Capture',
+    'profile_update'=>'Profile Updated',
 );

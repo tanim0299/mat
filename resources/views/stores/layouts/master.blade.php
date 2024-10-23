@@ -95,6 +95,12 @@
   stroke-dasharray: 25;
   stroke-dashoffset: 25;
 }
+.box {
+    height: 21px;
+    width: 21px;
+    float: left;
+    margin-right: 9px;
+}
     </style>
 </head>
 
